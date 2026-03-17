@@ -10,7 +10,6 @@ export function Sidebar({ role }: SidebarProps) {
   const menuItems = {
     CITIZEN: [
       { label: 'Dashboard', href: '/citizen' },
-      { label: 'Buat Pengaduan', href: '/citizen/create' },
       { label: 'Riwayat', href: '/citizen/history' },
     ],
     ADMIN: [
