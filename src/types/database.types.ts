@@ -38,4 +38,48 @@ export interface Complaint {
   is_escalated: boolean;
   created_at: string;
   updated_at: string;
+  // relations
+  complaint_categories?: ComplaintCategory;
+}
+
+export interface ComplaintAssignment {
+  id: string;
+  complaint_id: string;
+  officer_id: string;
+  assigned_by: string;
+  assigned_at: string;
+}
+
+export interface ComplaintUpdate {
+  id: string;
+  complaint_id: string;
+  officer_id: string;
+  status: ComplaintStatus;
+  notes: string;
+  photo_url?: string;
+  created_at: string;
+}
+
+export interface Rating {
+  id: string;
+  complaint_id: string;
+  citizen_id: string;
+  score: number;
+  feedback?: string;
+  created_at: string;
+}
+
+export interface SlaRule {
+  id: string;
+  category_id: string;
+  priority: ComplaintPriority;
+  resolution_time_hours: number;
+  created_at: string;
+}
+
+export interface EscalationLog {
+  id: string;
+  complaint_id: string;
+  reason: string;
+  escalated_at: string;
 }

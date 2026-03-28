@@ -15,7 +15,7 @@ export function Sidebar({ role }: SidebarProps) {
     ADMIN: [
       { label: 'Admin Panel', href: '/admin' },
       { label: 'Verifikasi Laporan', href: '/admin/verification' },
-      { label: 'Kelola SLA', href: '/admin/sla' },
+      { label: 'Kategori & SLA', href: '/admin/categories' },
     ],
     OFFICER: [
       { label: 'Tugas Saya', href: '/officer' },

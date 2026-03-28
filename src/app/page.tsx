@@ -1,35 +1,307 @@
-// File: src/app/page.tsx
+"use client"
+
+import React from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { motion, Variants } from "framer-motion";
+import { ArrowRight, ShieldCheck, Clock, Activity, Users, SendToBack, MapPin } from "lucide-react";
 
 export default function LandingPage() {
+  const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: { 
+      opacity: 1, 
+      transition: { staggerChildren: 0.15 } 
+    }
+  };
+
+  const itemVariants: Variants = {
+    hidden: { opacity: 0, y: 20 },
+    visible: { opacity: 1, y: 0, transition: { duration: 0.6 } }
+  };
+
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center p-6 text-center">
-      <div className="max-w-3xl space-y-8 bg-white p-12 rounded-2xl shadow-sm border border-slate-100">
-        <div className="space-y-4">
-          <h1 className="text-4xl md:text-5xl font-extrabold tracking-tight text-slate-900">
-            Sistem Pengaduan Warga <br className="hidden sm:block" />
-            <span className="text-blue-600">Berbasis SLA</span>
-          </h1>
-          <p className="text-lg text-slate-500 leading-relaxed max-w-2xl mx-auto">
-            Laporkan masalah infrastruktur dan lingkungan di sekitar Anda. Kami menjamin transparansi 
-            dan penyelesaian tepat waktu sesuai Standar Layanan (SLA).
-          </p>
+    <div className="relative min-h-screen bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-900 overflow-x-hidden font-sans w-full max-w-[100vw]">
+      
+      {/* Background Decor */}
+      <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-50/50 blur-[120px] -z-10" />
+      <div className="absolute bottom-[20%] right-[-10%] w-[40%] h-[50%] rounded-full bg-indigo-50/50 blur-[100px] -z-10" />
+
+      {/* Navbar Minimalist */}
+      <nav className="fixed top-0 w-full bg-white/80 backdrop-blur-md border-b border-slate-100 z-50">
+        <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center text-white font-bold">
+              L
+            </div>
+            <span className="font-bold text-xl tracking-tight">LaporSLA</span>
+          </div>
+          <div className="flex items-center gap-4">
+             <Link href="/auth/login" className="text-sm font-medium text-slate-600 hover:text-slate-900 transition-colors hidden sm:block">
+               Masuk
+             </Link>
+             <Link href="/auth/login?tab=register">
+               <Button className="rounded-full px-6 shadow-sm">Daftar</Button>
+             </Link>
+          </div>
         </div>
+      </nav>
+
+      {/* Hero Section */}
+      <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 px-6 min-h-[80vh] flex items-center justify-center">
         
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
-          <Link href="/citizen">
-            <Button size="lg" className="w-full sm:w-auto font-semibold shadow-md">
-              Masuk ke Dashboard
-            </Button>
-          </Link>
-          <Link href="/register">
-            <Button variant="outline" size="lg" className="w-full sm:w-auto font-semibold">
-              Daftar Akun Baru
+        {/* Floating Images Background */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          {/* Image 1 - Jalan Rusak */}
+          <div 
+             className="absolute top-[10%] left-[-5%] md:left-[5%] lg:left-[10%] w-32 h-40 md:w-48 md:h-64 rounded-2xl overflow-hidden shadow-2xl opacity-60 mix-blend-multiply -rotate-6 animate-in fade-in slide-in-from-bottom-10 duration-1000"
+          >
+            <img src="https://images.unsplash.com/photo-1584467735815-f778f274e296?q=80&w=800" alt="Jalan Rusak" className="object-cover w-full h-full" />
+          </div>
+
+          {/* Image 2 - Tumpukan Sampah */}
+          <div 
+             className="absolute top-[25%] right-[-5%] md:right-[5%] lg:right-[10%] w-36 h-36 md:w-56 md:h-56 rounded-full overflow-hidden shadow-2xl opacity-50 mix-blend-multiply rotate-12 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-200 fill-mode-both"
+          >
+            <img src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?q=80&w=800" alt="Sampah Menumpuk" className="object-cover w-full h-full" />
+          </div>
+
+          {/* Image 3 - Banjir Kontras */}
+          <div 
+             className="absolute hidden md:block bottom-[10%] left-[20%] w-40 h-32 rounded-3xl overflow-hidden shadow-xl opacity-50 mix-blend-multiply rotate-6 animate-in fade-in zoom-in duration-1000 delay-300 fill-mode-both"
+          >
+            <img src="https://images.unsplash.com/photo-1547683905-f686c993aae5?q=80&w=800" alt="Banjir" className="object-cover w-full h-full grayscale" />
+          </div>
+
+          {/* Image 4 - Polusi/Fasilitas Rusak */}
+          <div 
+             className="absolute hidden lg:block bottom-[15%] right-[25%] w-48 h-32 rounded-2xl overflow-hidden shadow-xl opacity-40 mix-blend-multiply -rotate-3 animate-in fade-in duration-1000 delay-500 fill-mode-both"
+          >
+            <img src="https://images.unsplash.com/photo-1449824913935-59a10b8d2000?q=80&w=800" alt="Lingkungan Kumuh" className="object-cover w-full h-full" />
+          </div>
+        </div>
+
+        <motion.div 
+          className="max-w-4xl mx-auto text-center relative z-10"
+          variants={containerVariants}
+          initial="hidden"
+          animate="visible"
+        >
+          <motion.div variants={itemVariants} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-sm font-medium mb-6 border border-blue-100">
+            <span className="flex h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
+            Sistem Pintar Berbasis Waktu Layanan
+          </motion.div>
+          
+          <motion.h1 
+            variants={itemVariants} 
+            className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 mb-8 leading-[1.1]"
+          >
+            Suara Anda didengar,<br className="hidden md:block" />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+              masalah diselesaikan.
+            </span>
+          </motion.h1>
+          
+          <motion.p variants={itemVariants} className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto mb-10 leading-relaxed">
+            Platform pelaporan warga modern yang menjamin respons cepat dengan Service Level Agreement (SLA). Pantau tiap progres secara transparan hingga tuntas.
+          </motion.p>
+          
+          <motion.div variants={itemVariants} className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <Link href="/auth/login?tab=register">
+              <Button size="lg" className="rounded-full h-14 px-8 text-base shadow-lg shadow-blue-600/20 hover:shadow-blue-600/40 transition-all flex items-center gap-2">
+                Buat Laporan Sekarang <ArrowRight className="w-4 h-4" />
+              </Button>
+            </Link>
+            <Link href="/auth/login">
+              <Button variant="outline" size="lg" className="rounded-full h-14 px-8 text-base border-slate-200 hover:bg-slate-50">
+                Lacak Status Laporan
+              </Button>
+            </Link>
+          </motion.div>
+        </motion.div>
+      </section>
+
+      {/* Stats Section */}
+      <section className="border-y border-slate-100 bg-slate-50/50">
+        <div className="max-w-7xl mx-auto px-6 py-12">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 text-center divide-x divide-slate-100">
+            {[
+              { id: 1, label: "Laporan Terselesaikan", value: "10K+" },
+              { id: 2, label: "Tingkat Respons SLA", value: "98.5%" },
+              { id: 3, label: "Rata-rata Penanganan", value: "< 24 Jam" },
+              { id: 4, label: "Petugas Aktif", value: "500+" },
+            ].map((stat) => (
+              <motion.div 
+                key={stat.id}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
+                viewport={{ once: true }}
+                className="flex flex-col items-center justify-center"
+              >
+                <div className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 mb-1">{stat.value}</div>
+                <div className="text-sm text-slate-500 font-medium">{stat.label}</div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features Bento Grid */}
+      <section className="py-24 px-6 max-w-7xl mx-auto">
+        <div className="mb-16 text-center max-w-2xl mx-auto">
+          <h2 className="text-3xl font-bold tracking-tight text-slate-900 mb-4">Mengapa Menggunakan LaporSLA?</h2>
+          <p className="text-slate-500">Dibangun dengan standar keamanan tingkat tinggi dan alur kepastian waktu pengerjaan untuk kenyamanan pengaduan Anda.</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="md:col-span-2 col-span-1 border border-slate-200 bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden"
+          >
+            <div className="absolute right-0 top-0 opacity-5 pointer-events-none -mr-10 -mt-10">
+              <Clock className="w-64 h-64" />
+            </div>
+            <div className="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center mb-6">
+              <Clock className="w-6 h-6" />
+            </div>
+            <h3 className="text-2xl font-semibold mb-3">Garansi Waktu SLA</h3>
+            <p className="text-slate-500 max-w-md leading-relaxed">
+              Setiap kategori pengaduan terikat dengan batas waktu (SLA) yang ketat. Laporan yang ditunda akan secara otomatis dieskalasi ke tingkat Supervisor untuk penanganan prioritas (Darurat).
+            </p>
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.1 }}
+            className="col-span-1 border border-slate-200 bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow"
+          >
+            <div className="w-12 h-12 rounded-xl bg-green-100 text-green-600 flex items-center justify-center mb-6">
+              <Activity className="w-6 h-6" />
+            </div>
+            <h3 className="text-xl font-semibold mb-3">Timeline Transparan</h3>
+            <p className="text-slate-500 leading-relaxed text-sm">
+              Lacak status laporan Anda secara real-time—mulai dari masuk, diverifikasi, sedang diproses oleh petugas lapangan, hingga selesai.
+            </p>
+          </motion.div>
+
+          <motion.div 
+             initial={{ opacity: 0, y: 20 }}
+             whileInView={{ opacity: 1, y: 0 }}
+             viewport={{ once: true }}
+             transition={{ delay: 0.2 }}
+             className="col-span-1 border border-slate-200 bg-slate-900 text-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow"
+           >
+             <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-6">
+               <ShieldCheck className="w-6 h-6" />
+             </div>
+             <h3 className="text-xl font-semibold mb-3">Verifikasi Berlapis</h3>
+             <p className="text-slate-400 leading-relaxed text-sm">
+               Semua laporan diperiksa validitasnya di panel Administrator sebelum diterjunkan ke petugas. Bebas dari spam dan penumpukan tugas.
+             </p>
+          </motion.div>
+
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ delay: 0.3 }}
+            className="md:col-span-2 col-span-1 border border-slate-200 bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow flex flex-col sm:flex-row gap-8 items-center"
+          >
+            <div className="flex-1">
+              <div className="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center mb-6">
+                <Users className="w-6 h-6" />
+              </div>
+              <h3 className="text-2xl font-semibold mb-3">Feedback Langsung</h3>
+              <p className="text-slate-500 leading-relaxed">
+                Evaluasi kinerja petugas penyedia fasilitas dan infrastruktur dengan memberikan rating secara langsung setelah keluhan Anda berhasil ditangani sistem.
+              </p>
+            </div>
+            <div className="w-48 h-48 sm:w-64 sm:h-64 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center flex-shrink-0 p-6 relative overflow-hidden">
+               {/* Decorative Abstract Star Rating Graph */}
+               <div className="absolute inset-0 bg-gradient-to-tr from-indigo-100/50 to-transparent" />
+               <div className="flex gap-1 relative z-10">
+                 {[1,2,3,4,5].map(i => (
+                   <motion.div 
+                     key={i} 
+                     initial={{ scale: 0 }} 
+                     whileInView={{ scale: 1 }} 
+                     transition={{ delay: 0.3 + (i * 0.1) }}
+                     viewport={{ once: true }}
+                   >
+                     <svg className="w-8 h-8 text-yellow-400 drop-shadow-sm" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                   </motion.div>
+                 ))}
+               </div>
+            </div>
+          </motion.div>
+
+        </div>
+      </section>
+
+      {/* Workflow Section */}
+      <section className="py-24 bg-slate-50 border-t border-slate-100">
+         <div className="max-w-7xl mx-auto px-6 text-center">
+            <h2 className="text-3xl font-bold tracking-tight text-slate-900 mb-16">Alur Pengaduan</h2>
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
+               <div className="hidden md:block absolute top-8 left-[12.5%] w-[75%] h-0.5 bg-slate-200 z-0" />
+               
+               {[
+                 { title: "Tulis Laporan", icon: MapPin, desc: "Sertakan foto, lokasi, dan detail masalah secara lengkap." },
+                 { title: "Verifikasi", icon: ShieldCheck, desc: "Laporan diverifikasi oleh Administrator dan diteruskan ke Petugas." },
+                 { title: "Penanganan", icon: SendToBack, desc: "Petugas berada di lapangan untuk memproses perbaikan/solusi." },
+                 { title: "Selesai", icon: React.Fragment, isCheck: true, desc: "Masalah tuntas, warga bisa memberi review atas pengerjaannya." }
+               ].map((step, index) => (
+                 <motion.div 
+                   key={index} 
+                   initial={{ opacity: 0, y: 20 }}
+                   whileInView={{ opacity: 1, y: 0 }}
+                   whileHover={{ y: -8 }}
+                   transition={{ 
+                      y: { type: "spring", stiffness: 300, damping: 20 },
+                      opacity: { delay: index * 0.15 } 
+                   }}
+                   viewport={{ once: true }}
+                   className="relative flex flex-col items-center cursor-default group"
+                 >
+                   <div className="w-16 h-16 rounded-full bg-white border-2 border-slate-200 shadow-sm flex items-center justify-center z-10 mb-6 text-slate-700 group-hover:border-blue-500 group-hover:text-blue-600 group-hover:shadow-md transition-all duration-300">
+                     {step.isCheck ? (
+                       <div className="w-full h-full rounded-full bg-green-500 text-white flex items-center justify-center group-hover:bg-green-400 transition-colors duration-300">
+                         <ShieldCheck className="w-6 h-6" />
+                       </div>
+                     ) : (
+                       <step.icon className="w-6 h-6" />
+                     )}
+                   </div>
+                   <h4 className="text-lg font-semibold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">{step.title}</h4>
+                   <p className="text-sm text-slate-500 px-4 group-hover:text-slate-700 transition-colors">{step.desc}</p>
+                 </motion.div>
+               ))}
+            </div>
+         </div>
+      </section>
+
+      {/* CTA Footer */}
+      <section className="py-24 px-6 relative overflow-hidden bg-slate-900 text-center">
+        <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] bg-repeat" />
+        <div className="relative z-10 max-w-3xl mx-auto">
+          <h2 className="text-3xl md:text-5xl font-bold text-white mb-6">Lingkungan Nyaman Dimulai dari Anda.</h2>
+          <p className="text-lg text-slate-400 mb-10">Bantu pemerintah memperbaiki fasilitas di daerah Anda dengan hanya mengunggah foto. Sistem SLA kami mengambil alih sisanya.</p>
+          <Link href="/auth/login?tab=register">
+            <Button size="lg" className="rounded-full h-14 px-10 text-lg bg-blue-600 hover:bg-blue-500 text-white shadow-lg shadow-blue-600/20">
+              Buat Akun Citizens Sekarang
             </Button>
           </Link>
         </div>
-      </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-slate-950 text-slate-500 py-12 text-center text-sm border-t border-slate-800">
+        <p>&copy; 2026 LaporSLA. Semua fitur berbasis Clean Architecture & Hak Cipta Dilindungi.</p>
+      </footer>
     </div>
   );
 }
