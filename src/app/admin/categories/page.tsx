@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import { PlusCircle, Tags } from 'lucide-react'
 import { useQuery } from '@tanstack/react-query'
-import { adminService } from '@/modules/admin/services/admin.service'
+import { getCategoriesAction } from '@/modules/admin/actions/admin.actions'
 
 import { Button } from '@/components/ui/button'
 import {
@@ -23,7 +23,7 @@ export default function AdminCategoriesPage() {
 
   const { data: categories, isLoading } = useQuery({
     queryKey: ['admin-categories'],
-    queryFn: () => adminService.getCategories()
+    queryFn: () => getCategoriesAction()
   });
 
   return (
@@ -34,8 +34,8 @@ export default function AdminCategoriesPage() {
              <Tags className="w-6 h-6 text-blue-600" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Kategori & Kondisi SLA</h1>
-            <p className="text-slate-500 text-sm mt-1">Kelola jenis kategori layanan dan aturan waktu kedaruratannya.</p>
+            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Kategori Laporan</h1>
+            <p className="text-slate-500 text-sm mt-1">Kelola jenis kategori masalah laporan untuk warga.</p>
           </div>
         </div>
         <Button onClick={() => setIsDialogOpen(true)} className="flex items-center gap-2 h-11 px-5 rounded-xl">
@@ -55,7 +55,7 @@ export default function AdminCategoriesPage() {
           <DialogHeader>
             <DialogTitle>Buat Kategori Baru</DialogTitle>
             <DialogDescription>
-              Tambahkan kategori masalah baru beserta aturan SLA-nya.
+              Tambahkan kategori masalah baru ke dalam sistem.
             </DialogDescription>
           </DialogHeader>
           <CreateCategoryForm onSuccess={() => setIsDialogOpen(false)} />

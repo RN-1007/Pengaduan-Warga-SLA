@@ -2,6 +2,7 @@
 import "./globals.css"; // <-- BARIS INI WAJIB ADA
 import { Inter } from "next/font/google";
 import QueryProvider from "@/components/providers/query-provider";
+import { Toaster } from "sonner";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -19,6 +20,7 @@ export default function RootLayout({
     <html lang="id">
       <body className={inter.className}>
         <QueryProvider>{children}</QueryProvider>
+        <Toaster position="top-center" />
       </body>
     </html>
   );

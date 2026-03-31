@@ -8,10 +8,7 @@ export const adminRepository = {
     // Fetch categories and their SLA rules
     const { data, error } = await supabase
       .from('complaint_categories')
-      .select(`
-        *,
-        sla_rules ( resolution_time_hours )
-      `)
+      .select('*')
       .order('created_at', { ascending: false });
 
     if (error) throw error;
@@ -34,21 +31,7 @@ export const adminRepository = {
 
     if (catError) throw catError;
 
-    // 2. Insert SLA Rules for this category
-    const slaRules = [
-      { category_id: category.id, priority: 'LOW', resolution_time_hours: data.sla_low || 72 },
-      { category_id: category.id, priority: 'MEDIUM', resolution_time_hours: data.sla_medium || 48 },
-      { category_id: category.id, priority: 'HIGH', resolution_time_hours: data.sla_high || 24 },
-      { category_id: category.id, priority: 'EMERGENCY', resolution_time_hours: data.sla_emergency || 6 },
-    ];
 
-    const { error: slaError } = await supabase
-      .from('sla_rules')
-      .insert(slaRules);
-
-    if (slaError) {
-      console.error("Failed to insert SLA rules, but category created.", slaError);
-    }
     
     return category;
   },

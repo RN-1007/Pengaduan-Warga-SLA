@@ -4,7 +4,7 @@ import * as React from "react"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { createComplaintSchema, type CreateComplaintFormData } from "../domain/schemas"
-import { complaintsService } from "../services/complaints.service"
+import { getActiveCategoriesAction, createComplaintAction } from "../actions/complaints.actions"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
 import { toast } from "sonner"
 
@@ -49,15 +49,14 @@ export function CreateComplaintForm({
   // Fetch Categories
   const { data: categories, isLoading: isCategoriesLoading } = useQuery({
     queryKey: ['complaint-categories'],
-    queryFn: () => complaintsService.getCategories()
+    queryFn: () => getActiveCategoriesAction()
   })
 
   // Mutation
   const mutation = useMutation({
     mutationFn: (data: CreateComplaintFormData) => 
-      // Simplified: Not handling actual file upload to storage here yet for brevity
-      // But we pass empty optional photo_url
-      complaintsService.createComplaint(data, citizenId, undefined),
+      // Using Server Action to bypass RLS for inserting complaints
+      createComplaintAction(data, citizenId, undefined),
     onSuccess: () => {
       toast.success("Pengaduan berhasil dibuat!")
       queryClient.invalidateQueries({ queryKey: ['complaints', citizenId] })

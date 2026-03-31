@@ -5,6 +5,13 @@ export type UserRole = 'CITIZEN' | 'ADMIN' | 'OFFICER' | 'SUPERVISOR';
 export type ComplaintPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'EMERGENCY';
 export type ComplaintStatus = 'SUBMITTED' | 'VERIFIED' | 'ASSIGNED' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED';
 
+export const SLA_RESOLUTION_HOURS: Record<ComplaintPriority, number> = {
+  LOW: 72,
+  MEDIUM: 48,
+  HIGH: 24,
+  EMERGENCY: 6
+};
+
 // ENTITIES
 export interface User {
   id: string;

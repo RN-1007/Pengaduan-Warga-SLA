@@ -2,8 +2,8 @@
 
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { complaintsService } from '@/modules/complaints/services/complaints.service'
 import { authService } from '@/modules/auth/services/auth.service'
+import { getComplaintsByCitizenAction } from '@/modules/complaints/actions/complaints.actions'
 import { PlusCircle, LogOut } from 'lucide-react'
 import { useRouter } from 'next/navigation'
 
@@ -49,7 +49,7 @@ export default function CitizenDashboardPage() {
 
   const { data: complaints, isLoading } = useQuery({
     queryKey: ['complaints', user?.id],
-    queryFn: () => complaintsService.getComplaintsByCitizen(user?.id as string),
+    queryFn: () => getComplaintsByCitizenAction(user?.id as string),
     enabled: !!user?.id
   });
 

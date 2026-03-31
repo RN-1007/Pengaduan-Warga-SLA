@@ -1,8 +1,8 @@
 "use client"
 
 import { useQuery } from '@tanstack/react-query'
-import { complaintsService } from '@/modules/complaints/services/complaints.service'
 import { authService } from '@/modules/auth/services/auth.service'
+import { getComplaintsByCitizenAction } from '@/modules/complaints/actions/complaints.actions'
 import { useRouter } from 'next/navigation'
 import { PlusCircle, ClipboardList } from 'lucide-react'
 import { useState } from 'react'
@@ -49,7 +49,7 @@ export default function CitizenHistoryPage() {
 
   const { data: complaints, isLoading } = useQuery({
     queryKey: ['complaints', user?.id],
-    queryFn: () => complaintsService.getComplaintsByCitizen(user?.id as string),
+    queryFn: () => getComplaintsByCitizenAction(user?.id as string),
     enabled: !!user?.id
   });
 

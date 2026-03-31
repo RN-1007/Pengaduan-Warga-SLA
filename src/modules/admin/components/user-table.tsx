@@ -4,7 +4,6 @@ import * as React from "react"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { adminUsersService } from "../services/admin-users.service"
 import { toast } from "sonner"
-import { Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 
 import {
@@ -24,9 +23,31 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator
 } from "@/components/ui/dropdown-menu"
+import { deleteUserAndAuthAction, editUserAction } from "../actions/admin-users.actions"
+import { Loader2, Pencil, Trash2 } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
 
 export function UserTable({ users, isLoading }: { users: any[], isLoading: boolean }) {
   const queryClient = useQueryClient()
+  const [userToDelete, setUserToDelete] = React.useState<{ id: string, name: string } | null>(null)
+  
+  const [editingUser, setEditingUser] = React.useState<any | null>(null)
+  const [editForm, setEditForm] = React.useState({ full_name: "", phone_number: "", role: "CITIZEN", password: "" })
 
   const roleMutation = useMutation({
     mutationFn: ({ userId, role }: { userId: string, role: string }) => 
@@ -42,24 +63,43 @@ export function UserTable({ users, isLoading }: { users: any[], isLoading: boole
   })
 
   const deleteMutation = useMutation({
-    mutationFn: (userId: string) => adminUsersService.deleteUser(userId),
+    mutationFn: (userId: string) => deleteUserAndAuthAction(userId),
     onSuccess: () => {
-      toast.success("Pengguna berhasil dihapus")
+      toast.success("Pengguna berhasil dihapus secara permanen (Auth & DB)")
       queryClient.invalidateQueries({ queryKey: ['admin-users'] })
+      setUserToDelete(null)
     },
     onError: (error: any) => {
-      toast.error("Gagal menghapus pengguna. (Kemungkinan masih ada data laporan terkait)")
+      toast.error("Gagal menghapus pengguna: " + error.message)
     }
+  })
+
+  const editMutation = useMutation({
+    mutationFn: (data: { id: string, payload: any }) => editUserAction(data.id, data.payload),
+    onSuccess: () => {
+      toast.success("Informasi pengguna berhasil diperbarui")
+      queryClient.invalidateQueries({ queryKey: ['admin-users'] })
+      setEditingUser(null)
+    },
+    onError: (err: any) => toast.error("Gagal mengupdate pengguna: " + err.message)
   })
 
   function handleRoleChange(userId: string, newRole: string) {
     roleMutation.mutate({ userId, role: newRole })
   }
 
-  function handleDeleteUser(userId: string, name: string) {
-    if (window.confirm(`Apakah Anda yakin ingin menghapus pengguna ${name}? Tindakan ini tidak bisa dibatalkan.`)) {
-      deleteMutation.mutate(userId)
-    }
+  function handleEditSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    if (!editingUser) return
+    editMutation.mutate({
+      id: editingUser.id,
+      payload: {
+        full_name: editForm.full_name,
+        phone_number: editForm.phone_number,
+        role: editForm.role,
+        password: editForm.password ? editForm.password : undefined
+      }
+    })
   }
 
   const getRoleBadgeColor = (role: string) => {
@@ -117,13 +157,26 @@ export function UserTable({ users, isLoading }: { users: any[], isLoading: boole
                   </DropdownMenu>
                 </TableCell>
                 <TableCell className="text-right">
-                  <div className="flex justify-end items-center gap-2">
+                  <div className="flex justify-end items-center gap-1">
+                    <Button 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-9 w-9 text-slate-400 hover:text-blue-600 hover:bg-blue-50"
+                      onClick={() => {
+                        setEditingUser(u)
+                        setEditForm({ full_name: u.full_name || "", phone_number: u.phone_number || "", role: u.role || "CITIZEN", password: "" })
+                      }}
+                      disabled={deleteMutation.isPending || editMutation.isPending}
+                      title="Edit Pengguna"
+                    >
+                      <Pencil className="w-4 h-4" />
+                    </Button>
                     <Button 
                       variant="ghost" 
                       size="icon" 
                       className="h-9 w-9 text-slate-400 hover:text-red-600 hover:bg-red-50"
-                      onClick={() => handleDeleteUser(u.id, u.full_name)}
-                      disabled={deleteMutation.isPending}
+                      onClick={() => setUserToDelete({ id: u.id, name: u.full_name })}
+                      disabled={deleteMutation.isPending || editMutation.isPending}
                       title="Hapus Pengguna"
                     >
                       <Trash2 className="w-4 h-4" />
@@ -141,6 +194,93 @@ export function UserTable({ users, isLoading }: { users: any[], isLoading: boole
           )}
         </TableBody>
       </Table>
+
+      <Dialog open={!!userToDelete} onOpenChange={(open) => !open && setUserToDelete(null)}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle className="text-red-600">Hapus Pengguna</DialogTitle>
+            <DialogDescription>
+              Apakah Anda yakin ingin menghapus pengguna <strong>{userToDelete?.name}</strong>? 
+              Tindakan ini akan menghapus akses login miliknya secara permanen dan tidak dapat dibatalkan.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="flex justify-end gap-3 mt-4">
+            <Button variant="outline" onClick={() => setUserToDelete(null)} disabled={deleteMutation.isPending}>
+              Batal
+            </Button>
+            <Button variant="destructive" onClick={() => userToDelete && deleteMutation.mutate(userToDelete.id)} disabled={deleteMutation.isPending}>
+              {deleteMutation.isPending ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Trash2 className="w-4 h-4 mr-2" />}
+              Ya, Hapus
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={!!editingUser} onOpenChange={(open) => !open && setEditingUser(null)}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Edit Pengguna</DialogTitle>
+            <DialogDescription>
+              Perbarui profil dan akses pengguna. (Sandi opsional, isi jika ingin mengubahnya)
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleEditSubmit} className="space-y-4 py-2">
+            <div className="space-y-2">
+              <Label htmlFor="edit_full_name">Nama Lengkap</Label>
+              <Input 
+                id="edit_full_name" 
+                value={editForm.full_name}
+                onChange={(e) => setEditForm({...editForm, full_name: e.target.value})}
+                required 
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit_phone">No. Telepon</Label>
+              <Input 
+                id="edit_phone" 
+                value={editForm.phone_number}
+                onChange={(e) => setEditForm({...editForm, phone_number: e.target.value})}
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="edit_role">Role Akses</Label>
+              <Select 
+                value={editForm.role} 
+                onValueChange={(val) => setEditForm({...editForm, role: val})}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Pilih Role" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="CITIZEN">Citizen (Warga)</SelectItem>
+                  <SelectItem value="OFFICER">Officer (Petugas)</SelectItem>
+                  <SelectItem value="SUPERVISOR">Supervisor</SelectItem>
+                  <SelectItem value="ADMIN">Admin</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="space-y-2 pt-2 border-t">
+              <Label htmlFor="edit_password">Katasandi Baru (Opsional)</Label>
+              <Input 
+                id="edit_password" 
+                type="password" 
+                placeholder="Biarkan kosong jika tidak diubah" 
+                value={editForm.password}
+                onChange={(e) => setEditForm({...editForm, password: e.target.value})}
+              />
+            </div>
+            <div className="flex justify-end gap-3 mt-4 pt-4">
+              <Button type="button" variant="outline" onClick={() => setEditingUser(null)} disabled={editMutation.isPending}>
+                Batal
+              </Button>
+              <Button type="submit" disabled={editMutation.isPending} className="bg-blue-600 hover:bg-blue-700">
+                {editMutation.isPending && <Loader2 className="w-4 h-4 mr-2 animate-spin" />}
+                Simpan Perubahan
+              </Button>
+            </div>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
