@@ -28,7 +28,10 @@ export function CreateCategoryForm({ onSuccess }: { onSuccess?: () => void }) {
     defaultValues: {
       name: "",
       description: "",
-      sla_hours: 24,
+      sla_low: 72,
+      sla_medium: 48,
+      sla_high: 24,
+      sla_emergency: 6,
     },
   })
 
@@ -78,22 +81,63 @@ export function CreateCategoryForm({ onSuccess }: { onSuccess?: () => void }) {
             </FormItem>
           )}
         />
-        <FormField
-          control={form.control}
-          name="sla_hours"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Batas Waktu SLA (Jam)</FormLabel>
-              <FormControl>
-                <Input type="number" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
-              </FormControl>
-              <FormDescription>
-                Berapa jam SLA (Service Level Agreement) maksimal untuk kategori ini sebelum dieskalasi darurat.
-              </FormDescription>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+        <div className="grid grid-cols-2 gap-4">
+          <FormField
+            control={form.control}
+            name="sla_low"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>SLA Rendah (Jam)</FormLabel>
+                <FormControl>
+                  <Input type="number" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="sla_medium"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>SLA Sedang (Jam)</FormLabel>
+                <FormControl>
+                  <Input type="number" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="sla_high"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>SLA Tinggi (Jam)</FormLabel>
+                <FormControl>
+                  <Input type="number" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="sla_emergency"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>SLA Darurat (Jam)</FormLabel>
+                <FormControl>
+                  <Input type="number" {...field} onChange={(e) => field.onChange(Number(e.target.value))} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </div>
+        <p className="text-sm text-muted-foreground">
+          Berapa jam SLA (Service Level Agreement) maksimal untuk kategori ini sebelum dieskalasi berdasarkan kondisi prioritasnya.
+        </p>
         <Button type="submit" className="w-full" disabled={isPending}>
           {isPending ? "Menyimpan..." : "Simpan Kategori"}
         </Button>

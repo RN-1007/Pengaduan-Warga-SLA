@@ -37,7 +37,7 @@ export function CategoryTable({ categories, isLoading }: { categories: any[], is
           <TableRow>
             <TableHead>Nama Kategori</TableHead>
             <TableHead>Deskripsi</TableHead>
-            <TableHead>Batas Waktu SLA</TableHead>
+            <TableHead>Aturan SLA (Jam)</TableHead>
             <TableHead>Status</TableHead>
             <TableHead className="text-right">Aksi</TableHead>
           </TableRow>
@@ -49,7 +49,13 @@ export function CategoryTable({ categories, isLoading }: { categories: any[], is
                 <TableCell className="font-medium">{cat.name}</TableCell>
                 <TableCell>{cat.description || '-'}</TableCell>
                 <TableCell>
-                  {cat.sla_rules?.[0]?.resolution_time_hours ? `${cat.sla_rules[0].resolution_time_hours} Jam` : '24 Jam (Default)'}
+                  <div className="flex flex-wrap gap-1">
+                    {cat.sla_rules?.length ? cat.sla_rules.map((rule: any) => (
+                      <Badge key={rule.id || rule.priority} variant="outline" className="text-xs">
+                        {rule.priority}: {rule.resolution_time_hours}j
+                      </Badge>
+                    )) : '-'}
+                  </div>
                 </TableCell>
                 <TableCell>
                   <Badge variant={cat.is_active ? 'default' : 'secondary'}>

@@ -62,7 +62,7 @@ export default function CitizenDashboardPage() {
 
   return (
     <div className="p-8 max-w-7xl mx-auto space-y-6">
-      
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
@@ -74,23 +74,26 @@ export default function CitizenDashboardPage() {
             <PlusCircle className="w-4 h-4" />
             Buat Pengaduan
           </Button>
-          <Button variant="outline" onClick={handleLogout}>
+          {/* <Button variant="outline" onClick={handleLogout}>
              <LogOut className="w-4 h-4 mr-2" /> Keluar
-          </Button>
+          </Button> */}
         </div>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-         <div className="border rounded-lg p-6 bg-card shadow-sm">
-           <p className="text-sm font-medium text-muted-foreground">Total Laporan Anda</p>
-           <h2 className="text-3xl font-bold mt-2">{complaints?.length || 0}</h2>
-         </div>
+        <div className="border rounded-lg p-6 bg-card shadow-sm">
+          <p className="text-sm font-medium text-muted-foreground">Total Laporan Anda</p>
+          <h2 className="text-3xl font-bold mt-2">{complaints?.length || 0}</h2>
+        </div>
       </div>
 
       {/* Table */}
       <div className="border rounded-lg shadow-sm bg-card overflow-hidden">
-        <div className="p-6 border-b">
-          <h2 className="text-xl font-semibold">Riwayat Pengaduan</h2>
+        <div className="p-6 border-b flex justify-between items-center">
+          <h2 className="text-xl font-semibold">Laporan Terbaru</h2>
+          <Button variant="outline" size="sm" onClick={() => router.push('/citizen/history')}>
+            Lihat Semua
+          </Button>
         </div>
         <Table>
           <TableHeader>
@@ -108,9 +111,9 @@ export default function CitizenDashboardPage() {
                 <TableCell colSpan={5} className="text-center py-6 text-muted-foreground">Memuat data...</TableCell>
               </TableRow>
             ) : complaints?.length ? (
-              complaints.map((c: any) => (
-                <TableRow 
-                  key={c.id} 
+              complaints.slice(0, 3).map((c: any) => (
+                <TableRow
+                  key={c.id}
                   className="cursor-pointer hover:bg-slate-50 transition-colors"
                   onClick={() => router.push(`/citizen/complaints/${c.id}`)}
                 >
@@ -143,13 +146,13 @@ export default function CitizenDashboardPage() {
               Isi form di bawah dengan informasi sejelas mungkin.
             </DialogDescription>
           </DialogHeader>
-          <CreateComplaintForm 
-            citizenId={user.id} 
-            onSuccess={() => setIsDialogOpen(false)} 
+          <CreateComplaintForm
+            citizenId={user.id}
+            onSuccess={() => setIsDialogOpen(false)}
           />
         </DialogContent>
       </Dialog>
-      
+
     </div>
   )
 }

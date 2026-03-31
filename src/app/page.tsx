@@ -85,7 +85,8 @@ export default function LandingPage() {
           className="max-w-4xl mx-auto text-center relative z-10"
           variants={containerVariants}
           initial="hidden"
-          animate="visible"
+          whileInView="visible"
+          viewport={{ once: false, amount: 0.2 }}
         >
           <motion.div variants={itemVariants} className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-sm font-medium mb-6 border border-blue-100">
             <span className="flex h-2 w-2 rounded-full bg-blue-600 animate-pulse" />
@@ -135,7 +136,7 @@ export default function LandingPage() {
                 key={stat.id}
                 initial={{ opacity: 0, scale: 0.9 }}
                 whileInView={{ opacity: 1, scale: 1 }}
-                viewport={{ once: true }}
+                viewport={{ once: false, amount: 0.2 }}
                 className="flex flex-col items-center justify-center"
               >
                 <div className="text-3xl md:text-4xl font-bold tracking-tight text-slate-900 mb-1">{stat.value}</div>
@@ -157,17 +158,18 @@ export default function LandingPage() {
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="md:col-span-2 col-span-1 border border-slate-200 bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow relative overflow-hidden"
+            viewport={{ once: false, amount: 0.2 }}
+            className="md:col-span-2 col-span-1 border border-slate-200 bg-white rounded-3xl p-8 shadow-sm hover:shadow-xl hover:shadow-blue-500/10 hover:border-blue-200 transition-all duration-500 hover:-translate-y-1 relative overflow-hidden group cursor-default"
           >
-            <div className="absolute right-0 top-0 opacity-5 pointer-events-none -mr-10 -mt-10">
-              <Clock className="w-64 h-64" />
+            <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            <div className="absolute right-0 top-0 opacity-5 pointer-events-none -mr-10 -mt-10 group-hover:scale-110 group-hover:rotate-12 group-hover:opacity-[0.08] transition-all duration-700 origin-center">
+              <Clock className="w-64 h-64 text-blue-900" />
             </div>
-            <div className="w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center mb-6">
+            <div className="relative z-10 w-12 h-12 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center mb-6 group-hover:bg-blue-600 group-hover:text-white group-hover:shadow-md group-hover:-translate-y-1 transition-all duration-300">
               <Clock className="w-6 h-6" />
             </div>
-            <h3 className="text-2xl font-semibold mb-3">Garansi Waktu SLA</h3>
-            <p className="text-slate-500 max-w-md leading-relaxed">
+            <h3 className="relative z-10 text-2xl font-semibold mb-3 group-hover:text-blue-950 transition-colors duration-300">Garansi Waktu SLA</h3>
+            <p className="relative z-10 text-slate-500 max-w-md leading-relaxed group-hover:text-slate-600 transition-colors duration-300">
               Setiap kategori pengaduan terikat dengan batas waktu (SLA) yang ketat. Laporan yang ditunda akan secara otomatis dieskalasi ke tingkat Supervisor untuk penanganan prioritas (Darurat).
             </p>
           </motion.div>
@@ -175,15 +177,16 @@ export default function LandingPage() {
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: false, amount: 0.2 }}
             transition={{ delay: 0.1 }}
-            className="col-span-1 border border-slate-200 bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow"
+            className="relative overflow-hidden col-span-1 border border-slate-200 bg-white rounded-3xl p-8 shadow-sm hover:shadow-xl hover:shadow-green-500/10 hover:border-green-200 transition-all duration-500 hover:-translate-y-1 group"
           >
-            <div className="w-12 h-12 rounded-xl bg-green-100 text-green-600 flex items-center justify-center mb-6">
+            <div className="absolute inset-0 bg-gradient-to-bl from-green-50/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            <div className="relative z-10 w-12 h-12 rounded-xl bg-green-100 text-green-600 flex items-center justify-center mb-6 group-hover:bg-green-600 group-hover:text-white group-hover:shadow-md group-hover:-translate-y-1 transition-all duration-300">
               <Activity className="w-6 h-6" />
             </div>
-            <h3 className="text-xl font-semibold mb-3">Timeline Transparan</h3>
-            <p className="text-slate-500 leading-relaxed text-sm">
+            <h3 className="relative z-10 text-xl font-semibold mb-3 group-hover:text-green-950 transition-colors duration-300">Timeline Transparan</h3>
+            <p className="relative z-10 text-slate-500 leading-relaxed text-sm group-hover:text-slate-600 transition-colors duration-300">
               Lacak status laporan Anda secara real-time—mulai dari masuk, diverifikasi, sedang diproses oleh petugas lapangan, hingga selesai.
             </p>
           </motion.div>
@@ -191,15 +194,19 @@ export default function LandingPage() {
           <motion.div 
              initial={{ opacity: 0, y: 20 }}
              whileInView={{ opacity: 1, y: 0 }}
-             viewport={{ once: true }}
+             viewport={{ once: false, amount: 0.2 }}
              transition={{ delay: 0.2 }}
-             className="col-span-1 border border-slate-200 bg-slate-900 text-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow"
+             className="relative overflow-hidden col-span-1 border border-slate-800 bg-slate-900 text-white rounded-3xl p-8 shadow-sm hover:shadow-xl hover:shadow-indigo-500/20 hover:border-indigo-500/50 transition-all duration-500 hover:-translate-y-1 group"
            >
-             <div className="w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-6">
+             <div className="absolute inset-0 bg-gradient-to-tr from-indigo-900/40 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+             <div className="absolute right-0 bottom-0 opacity-0 group-hover:opacity-10 group-hover:scale-110 group-hover:-translate-x-4 transition-all duration-700 pointer-events-none">
+                <ShieldCheck className="w-48 h-48 text-indigo-300" />
+             </div>
+             <div className="relative z-10 w-12 h-12 rounded-xl bg-white/10 flex items-center justify-center mb-6 group-hover:bg-indigo-500 group-hover:text-white group-hover:shadow-md group-hover:shadow-indigo-500/50 group-hover:-translate-y-1 transition-all duration-300 backdrop-blur-sm">
                <ShieldCheck className="w-6 h-6" />
              </div>
-             <h3 className="text-xl font-semibold mb-3">Verifikasi Berlapis</h3>
-             <p className="text-slate-400 leading-relaxed text-sm">
+             <h3 className="relative z-10 text-xl font-semibold mb-3 group-hover:text-indigo-100 transition-colors duration-300">Verifikasi Berlapis</h3>
+             <p className="relative z-10 text-slate-400 leading-relaxed text-sm group-hover:text-slate-300 transition-colors duration-300">
                Semua laporan diperiksa validitasnya di panel Administrator sebelum diterjunkan ke petugas. Bebas dari spam dan penumpukan tugas.
              </p>
           </motion.div>
@@ -207,32 +214,35 @@ export default function LandingPage() {
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
+            viewport={{ once: false, amount: 0.2 }}
             transition={{ delay: 0.3 }}
-            className="md:col-span-2 col-span-1 border border-slate-200 bg-white rounded-3xl p-8 shadow-sm hover:shadow-md transition-shadow flex flex-col sm:flex-row gap-8 items-center"
+            className="md:col-span-2 col-span-1 border border-slate-200 bg-white rounded-3xl p-8 shadow-sm hover:shadow-xl hover:shadow-indigo-500/10 hover:border-indigo-200 transition-all duration-500 hover:-translate-y-1 flex flex-col sm:flex-row gap-8 items-center relative overflow-hidden group"
           >
-            <div className="flex-1">
-              <div className="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center mb-6">
+            <div className="absolute inset-0 bg-gradient-to-l from-indigo-50/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none" />
+            <div className="flex-1 relative z-10">
+              <div className="w-12 h-12 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center mb-6 group-hover:bg-indigo-600 group-hover:text-white group-hover:shadow-md group-hover:-translate-y-1 transition-all duration-300">
                 <Users className="w-6 h-6" />
               </div>
-              <h3 className="text-2xl font-semibold mb-3">Feedback Langsung</h3>
-              <p className="text-slate-500 leading-relaxed">
+              <h3 className="text-2xl font-semibold mb-3 group-hover:text-indigo-950 transition-colors duration-300">Feedback Langsung</h3>
+              <p className="text-slate-500 leading-relaxed group-hover:text-slate-600 transition-colors duration-300">
                 Evaluasi kinerja petugas penyedia fasilitas dan infrastruktur dengan memberikan rating secara langsung setelah keluhan Anda berhasil ditangani sistem.
               </p>
             </div>
-            <div className="w-48 h-48 sm:w-64 sm:h-64 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center flex-shrink-0 p-6 relative overflow-hidden">
+            <div className="w-48 h-48 sm:w-64 sm:h-64 rounded-2xl bg-slate-50 border border-slate-100 flex items-center justify-center flex-shrink-0 p-6 relative overflow-hidden group-hover:border-indigo-100 group-hover:shadow-inner transition-all duration-500">
                {/* Decorative Abstract Star Rating Graph */}
-               <div className="absolute inset-0 bg-gradient-to-tr from-indigo-100/50 to-transparent" />
-               <div className="flex gap-1 relative z-10">
+               <div className="absolute inset-0 bg-gradient-to-tr from-indigo-100/50 to-transparent group-hover:from-indigo-200/50 transition-colors duration-500" />
+               <div className="flex gap-1 relative z-10 group-hover:scale-110 transition-transform duration-500">
                  {[1,2,3,4,5].map(i => (
                    <motion.div 
                      key={i} 
                      initial={{ scale: 0 }} 
                      whileInView={{ scale: 1 }} 
                      transition={{ delay: 0.3 + (i * 0.1) }}
-                     viewport={{ once: true }}
+                     viewport={{ once: false, amount: 0.2 }}
+                     className="group-hover:-translate-y-1 transition-transform duration-300"
+                     style={{ transitionDelay: `${i * 50}ms` }}
                    >
-                     <svg className="w-8 h-8 text-yellow-400 drop-shadow-sm" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
+                     <svg className="w-8 h-8 text-yellow-400 drop-shadow-sm group-hover:drop-shadow-md transition-all duration-300" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" /></svg>
                    </motion.div>
                  ))}
                </div>
@@ -264,7 +274,7 @@ export default function LandingPage() {
                       y: { type: "spring", stiffness: 300, damping: 20 },
                       opacity: { delay: index * 0.15 } 
                    }}
-                   viewport={{ once: true }}
+                   viewport={{ once: false, amount: 0.2 }}
                    className="relative flex flex-col items-center cursor-default group"
                  >
                    <div className="w-16 h-16 rounded-full bg-white border-2 border-slate-200 shadow-sm flex items-center justify-center z-10 mb-6 text-slate-700 group-hover:border-blue-500 group-hover:text-blue-600 group-hover:shadow-md transition-all duration-300">

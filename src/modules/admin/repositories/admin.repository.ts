@@ -34,14 +34,17 @@ export const adminRepository = {
 
     if (catError) throw catError;
 
-    // 2. Insert default SLA Rule for this category (we use HIGH/MEDIUM as default or just define one)
+    // 2. Insert SLA Rules for this category
+    const slaRules = [
+      { category_id: category.id, priority: 'LOW', resolution_time_hours: data.sla_low || 72 },
+      { category_id: category.id, priority: 'MEDIUM', resolution_time_hours: data.sla_medium || 48 },
+      { category_id: category.id, priority: 'HIGH', resolution_time_hours: data.sla_high || 24 },
+      { category_id: category.id, priority: 'EMERGENCY', resolution_time_hours: data.sla_emergency || 6 },
+    ];
+
     const { error: slaError } = await supabase
       .from('sla_rules')
-      .insert({
-        category_id: category.id,
-        priority: 'MEDIUM', // Default priority or can be applied to all
-        resolution_time_hours: data.sla_hours || 24,
-      });
+      .insert(slaRules);
 
     if (slaError) {
       console.error("Failed to insert SLA rules, but category created.", slaError);
