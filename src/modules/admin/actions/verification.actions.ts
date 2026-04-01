@@ -55,7 +55,6 @@ export async function verifyComplaintAction(payload: {
   await supabase.from('complaint_updates').insert({
     complaint_id: payload.complaintId,
     officer_id: payload.adminId,
-    status: 'VERIFIED',
     notes: logNotes,
   });
 
@@ -79,7 +78,6 @@ export async function rejectComplaintAction(payload: {
   await supabase.from('complaint_updates').insert({
     complaint_id: payload.complaintId,
     officer_id: payload.adminId,
-    status: 'CLOSED',
     notes: `[DITOLAK] ${payload.reason}`,
   });
 

@@ -12,7 +12,6 @@ import {
   ShieldAlert,
   LogOut,
   MapPin,
-  Timer,
   UserCheck
 } from 'lucide-react'
 import { authService } from '@/modules/auth/services/auth.service'
@@ -36,7 +35,6 @@ export function Sidebar({ role }: SidebarProps) {
       { label: 'Assign Tugas Officer', href: '/admin/assignments', icon: UserCheck },
       { label: 'Manajemen Pengguna', href: '/admin/users', icon: Users },
       { label: 'Kategori & Kondisi', href: '/admin/categories', icon: Tags },
-      { label: 'Kelola SLA', href: '/admin/sla', icon: Timer },
     ],
     OFFICER: [
       { label: 'Tugas Saya', href: '/officer', icon: ClipboardList },

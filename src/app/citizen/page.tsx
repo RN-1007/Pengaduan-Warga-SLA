@@ -139,11 +139,11 @@ export default function CitizenDashboardPage() {
 
       {/* Dialog for Creation */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[560px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Buat Pengaduan Baru</DialogTitle>
             <DialogDescription>
-              Isi form di bawah dengan informasi sejelas mungkin.
+              Isi form di bawah dengan informasi sejelas mungkin. Tambahkan foto bukti untuk mempercepat penanganan.
             </DialogDescription>
           </DialogHeader>
           <CreateComplaintForm

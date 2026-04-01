@@ -106,7 +106,6 @@ export async function addComplaintUpdateAction(payload: {
     .insert({
       complaint_id: payload.complaintId,
       officer_id: payload.officerId,
-      status: payload.status,
       notes: payload.notes,
     });
     

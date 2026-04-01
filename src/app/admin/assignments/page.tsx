@@ -2,9 +2,12 @@
 
 import { useState } from "react"
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query"
-import { useQuery as useAuthQuery } from "@tanstack/react-query"
 import { authService } from "@/modules/auth/services/auth.service"
-import { assignmentService } from "@/modules/admin/services/assignment.service"
+import {
+  getVerifiedComplaintsAction,
+  getAvailableOfficersAction,
+  assignComplaintAction,
+} from "@/modules/admin/actions/assignment.actions"
 import { toast } from "sonner"
 import { motion } from "framer-motion"
 import { formatDistanceToNow, format } from "date-fns"
@@ -45,19 +48,19 @@ export default function AdminAssignmentsPage() {
 
   const { data: complaints, isLoading: loadingComplaints } = useQuery({
     queryKey: ['verified-complaints'],
-    queryFn: () => assignmentService.getVerifiedComplaints(),
+    queryFn: () => getVerifiedComplaintsAction(),
   })
 
   const { data: officers, isLoading: loadingOfficers } = useQuery({
     queryKey: ['available-officers'],
-    queryFn: () => assignmentService.getAvailableOfficers(),
+    queryFn: () => getAvailableOfficersAction(),
   })
 
   const [selectedComplaint, setSelectedComplaint] = useState<any | null>(null)
   const [selectedOfficer, setSelectedOfficer] = useState("")
 
   const assignMutate = useMutation({
-    mutationFn: (data: any) => assignmentService.assignComplaint(data),
+    mutationFn: (data: any) => assignComplaintAction(data),
     onSuccess: () => {
       toast.success("Tugas berhasil diberikan ke petugas!")
       queryClient.invalidateQueries({ queryKey: ['verified-complaints'] })
