@@ -1,7 +1,7 @@
 "use client"
 
 import { useQuery } from '@tanstack/react-query'
-import { complaintsService } from '@/modules/complaints/services/complaints.service'
+import { getAllComplaintsAction } from '@/modules/complaints/actions/complaints.actions'
 import { AdminComplaintTable } from '@/modules/complaints/components/admin-complaint-table'
 import { authService } from '@/modules/auth/services/auth.service'
 import { Button } from '@/components/ui/button'
@@ -19,7 +19,7 @@ export default function AdminDashboardPage() {
 
   const { data: complaints, isLoading } = useQuery({
     queryKey: ['all-complaints'],
-    queryFn: () => complaintsService.getAllComplaints()
+    queryFn: () => getAllComplaintsAction()
   });
 
   const [greeting, setGreeting] = useState('Selamat Datang')

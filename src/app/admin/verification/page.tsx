@@ -53,6 +53,8 @@ import {
     FileSearch,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { FilterBar } from "@/components/ui/filter-bar";
+import { useFilteredData } from "@/hooks/use-filtered-data";
 
 export default function VerificationPage() {
     const queryClient = useQueryClient();
@@ -84,6 +86,8 @@ export default function VerificationPage() {
         onSuccess: () => {
             toast.success("Laporan berhasil diverifikasi! SLA telah aktif.");
             queryClient.invalidateQueries({ queryKey: ["pending-complaints"] });
+            queryClient.invalidateQueries({ queryKey: ["verified-complaints"] });
+            queryClient.invalidateQueries({ queryKey: ["complaints"] });
         },
         onError: (err: any) => toast.error("Gagal memverifikasi: " + err.message),
     });
@@ -93,12 +97,13 @@ export default function VerificationPage() {
         onSuccess: () => {
             toast.success("Laporan telah ditolak.");
             queryClient.invalidateQueries({ queryKey: ["pending-complaints"] });
+            queryClient.invalidateQueries({ queryKey: ["complaints"] });
         },
         onError: (err: any) => toast.error("Gagal menolak laporan: " + err.message),
     });
 
     // ── Map raw DB data ke shape yang dibutuhkan UI ──
-    const complaints = (pendingComplaints || []).map((c: any) => ({
+    const mappedComplaints = (pendingComplaints || []).map((c: any) => ({
         id: c.id,
         citizenName: c.users?.full_name || "-",
         title: c.title,
@@ -110,6 +115,17 @@ export default function VerificationPage() {
         date: format(new Date(c.created_at), "dd MMM yyyy", { locale: idLocale }),
         status: c.status,
     }));
+
+    const {
+        searchQuery,
+        setSearchQuery,
+        sortOption,
+        setSortOption,
+        filteredData: complaints
+    } = useFilteredData({
+        initialData: mappedComplaints,
+        searchKeys: ['title', 'location', 'citizenName', 'category', 'id'],
+    });
 
     return (
         <div className="p-8 max-w-7xl mx-auto space-y-6 flex flex-col min-h-screen">
@@ -159,6 +175,18 @@ export default function VerificationPage() {
                     </span>
                 </div>
 
+                <div className="p-4 border-b border-slate-100 bg-slate-50/30">
+                    <FilterBar 
+                        searchQuery={searchQuery}
+                        onSearchChange={setSearchQuery}
+                        sortOption={sortOption}
+                        onSortChange={setSortOption}
+                        placeholder="Cari ID, judul, kategori, pelapor..."
+                        totalFiltered={complaints.length}
+                        totalItems={mappedComplaints.length}
+                    />
+                </div>
+
                 <Table>
                     <TableHeader className="bg-slate-50/80">
                         <TableRow>
@@ -197,8 +225,12 @@ export default function VerificationPage() {
                                 <TableCell colSpan={6} className="h-48 text-center">
                                     <div className="flex flex-col items-center gap-2 text-slate-400">
                                         <CheckCircle2 className="w-10 h-10 text-green-300" />
-                                        <p className="font-medium text-slate-500">Semua laporan sudah terverifikasi!</p>
-                                        <p className="text-sm">Tidak ada laporan baru yang menunggu.</p>
+                                        <p className="font-medium text-slate-500">
+                                            {searchQuery ? "Tidak ada laporan yang cocok." : "Semua laporan sudah terverifikasi!"}
+                                        </p>
+                                        <p className="text-sm">
+                                            {searchQuery ? "Coba kata kunci pencarian yang lain." : "Tidak ada laporan baru yang menunggu."}
+                                        </p>
                                     </div>
                                 </TableCell>
                             </TableRow>

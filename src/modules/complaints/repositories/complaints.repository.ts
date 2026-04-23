@@ -49,7 +49,6 @@ export const complaintsRepository = {
     return data;
   },
 
-  /** Get a single complaint detail */
   async getComplaintById(id: string) {
     const supabase = createClient();
     const { data, error } = await supabase
@@ -60,10 +59,10 @@ export const complaintsRepository = {
         users!complaints_citizen_id_fkey ( full_name, email, phone_number )
       `)
       .eq('id', id)
-      .single();
+      .limit(1);
 
     if (error) throw error;
-    return data;
+    return data?.[0] || null;
   },
 
   /** Update a complaint's status (Admin, Officer) */

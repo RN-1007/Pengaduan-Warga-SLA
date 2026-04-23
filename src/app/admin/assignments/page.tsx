@@ -12,6 +12,8 @@ import { toast } from "sonner"
 import { motion } from "framer-motion"
 import { formatDistanceToNow, format } from "date-fns"
 import { id as idLocale } from "date-fns/locale"
+import { FilterBar } from "@/components/ui/filter-bar"
+import { useFilteredData } from "@/hooks/use-filtered-data"
 
 import {
   UserCheck, Clock, MapPin, User, AlertTriangle,
@@ -58,6 +60,17 @@ export default function AdminAssignmentsPage() {
 
   const [selectedComplaint, setSelectedComplaint] = useState<any | null>(null)
   const [selectedOfficer, setSelectedOfficer] = useState("")
+
+  const {
+    searchQuery,
+    setSearchQuery,
+    sortOption,
+    setSortOption,
+    filteredData
+  } = useFilteredData({
+    initialData: complaints,
+    searchKeys: ['title', 'location', 'users.full_name', 'priority'],
+  })
 
   const assignMutate = useMutation({
     mutationFn: (data: any) => assignComplaintAction(data),
@@ -112,6 +125,16 @@ export default function AdminAssignmentsPage() {
       <motion.div
         initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}
       >
+        <FilterBar 
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
+          sortOption={sortOption}
+          onSortChange={setSortOption}
+          placeholder="Cari berdasarkan judul, lokasi, pelapor..."
+          totalFiltered={filteredData.length}
+          totalItems={complaints?.length || 0}
+        />
+
         {loadingComplaints ? (
           <div className="flex flex-col items-center justify-center py-24 text-slate-400">
             <Loader2 className="w-10 h-10 animate-spin text-blue-500 mb-4" />
@@ -122,14 +145,16 @@ export default function AdminAssignmentsPage() {
             <div className="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mb-4">
               <CheckCircle2 className="w-8 h-8" />
             </div>
-            <h3 className="text-xl font-bold text-slate-800">Semua Laporan Sudah Ditugaskan</h3>
+            <h3 className="text-xl font-bold text-slate-800">
+               {searchQuery ? "Laporan tidak ditemukan" : "Semua Laporan Sudah Ditugaskan"}
+            </h3>
             <p className="text-slate-500 mt-2 max-w-sm">
-              Tidak ada laporan terverifikasi yang menunggu assignment saat ini.
+               {searchQuery ? "Coba kata kunci lain." : "Tidak ada laporan terverifikasi yang menunggu assignment saat ini."}
             </p>
           </div>
         ) : (
           <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-            {complaints.map((c: any, i: number) => {
+            {filteredData.map((c: any, i: number) => {
               const prio = PRIORITY_CONFIG[c.priority] || PRIORITY_CONFIG.LOW
               const breach = isSlaBreach(c.sla_deadline)
               return (

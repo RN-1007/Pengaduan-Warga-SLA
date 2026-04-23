@@ -23,6 +23,8 @@ import {
   Loader2
 } from 'lucide-react'
 import { Badge } from '@/components/ui/badge'
+import { FilterBar } from "@/components/ui/filter-bar"
+import { useFilteredData } from "@/hooks/use-filtered-data"
 import { Button } from '@/components/ui/button'
 import { formatDistanceToNow, isPast } from 'date-fns'
 import { id } from 'date-fns/locale'
@@ -59,6 +61,17 @@ export function EscalationBoard({ currentUserId }: { currentUserId: string }) {
   const { data: complaints, isLoading } = useQuery({
     queryKey: ['escalated-complaints'],
     queryFn: () => getEscalatedComplaintsAction()
+  })
+
+  const {
+    searchQuery,
+    setSearchQuery,
+    sortOption,
+    setSortOption,
+    filteredData
+  } = useFilteredData({
+    initialData: complaints,
+    searchKeys: ['title', 'location', 'users.full_name', 'id'],
   })
 
   const { data: officers } = useQuery({
@@ -145,6 +158,16 @@ export function EscalationBoard({ currentUserId }: { currentUserId: string }) {
 
   return (
     <>
+      <FilterBar 
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        sortOption={sortOption}
+        onSortChange={setSortOption}
+        placeholder="Cari berdasarkan ID, nama pelapor, judul..."
+        totalFiltered={filteredData.length}
+        totalItems={complaints?.length || 0}
+      />
+
       <motion.div 
         variants={containerVariants}
         initial="hidden"
@@ -152,8 +175,13 @@ export function EscalationBoard({ currentUserId }: { currentUserId: string }) {
         className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
       >
         <AnimatePresence>
-          {complaints.map((c) => {
-            const isLate = c.sla_deadline ? isPast(new Date(c.sla_deadline)) : false;
+          {filteredData.length === 0 ? (
+             <div className="col-span-full py-12 text-center text-slate-500">
+               {searchQuery ? "Tidak ada eskalasi yang cocok dengan pencarian." : "Belum ada eskalasi."}
+             </div>
+          ) : (
+            filteredData.map((c: any) => {
+              const isLate = c.sla_deadline ? isPast(new Date(c.sla_deadline)) : false;
             
             return (
               <motion.div 
@@ -232,7 +260,7 @@ export function EscalationBoard({ currentUserId }: { currentUserId: string }) {
                 </div>
               </motion.div>
             )
-          })}
+          }))}
         </AnimatePresence>
       </motion.div>
 

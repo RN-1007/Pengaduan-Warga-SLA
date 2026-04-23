@@ -30,22 +30,23 @@ export default function AuthPage() {
       
       <div className="w-full max-w-5xl bg-white rounded-[2rem] shadow-2xl shadow-slate-200/50 min-h-[650px] relative z-10 border border-slate-100 overflow-hidden flex flex-col md:block">
         
+        {/* Back to Home Link (Fully independent from sliding pane) */}
+        <div className="absolute top-4 left-4 sm:top-6 sm:left-6 z-[60]">
+          <Link href="/" className="flex flex-row items-center gap-2 text-slate-500 hover:text-slate-800 transition-colors font-medium text-sm group bg-white/60 backdrop-blur-md rounded-full p-1 pr-3 shadow-[0_2px_10px_-4px_rgba(0,0,0,0.1)] hover:bg-white/90">
+            <div className="w-8 h-8 rounded-full bg-white border border-slate-100 flex flex-col items-center justify-center shadow-sm group-hover:bg-slate-50 transition-colors">
+              <ArrowLeft className="w-4 h-4" />
+            </div>
+            <span className="hidden sm:inline">Beranda</span>
+          </Link>
+        </div>
+
         {/* Form Area (Sliding) */}
         <motion.div 
           initial={false}
           animate={{ x: isLogin ? "0%" : "100%" }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          className="w-full md:absolute md:top-0 md:left-0 md:w-1/2 md:h-full p-8 md:p-12 lg:p-16 flex flex-col items-center justify-center bg-white z-10 relative"
+          className="w-full md:absolute md:top-0 md:left-0 md:w-1/2 md:h-full px-6 pt-16 pb-8 md:p-12 lg:p-16 flex flex-col items-center justify-start md:justify-center bg-white z-10 relative overflow-y-auto scrollbar-hide"
         >
-          {/* Back to Home Link (Integrated into Card) */}
-          <div className="absolute top-8 left-8 lg:top-10 lg:left-12">
-            <Link href="/" className="flex items-center gap-2 text-slate-400 hover:text-slate-800 transition-colors font-medium text-sm group">
-              <div className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-slate-200 transition-colors">
-                <ArrowLeft className="w-4 h-4" />
-              </div>
-              <span className="hidden sm:inline">Beranda</span>
-            </Link>
-          </div>
 
           <AnimatePresence mode="wait">
             {isLogin ? (

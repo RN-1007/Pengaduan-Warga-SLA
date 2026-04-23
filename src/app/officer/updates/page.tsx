@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function OfficerUpdatesPage() {
   return (
-    <div className="max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500 min-h-screen">
+    <div className="p-8 max-w-7xl mx-auto space-y-8 animate-in fade-in duration-500 min-h-screen">
       <div>
         <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 mb-2">
           Update <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">Progres</span>

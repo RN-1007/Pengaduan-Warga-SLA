@@ -41,6 +41,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { FilterBar } from "@/components/ui/filter-bar"
+import { useFilteredData } from "@/hooks/use-filtered-data"
 
 export function UserTable({ users, isLoading }: { users: any[], isLoading: boolean }) {
   const queryClient = useQueryClient()
@@ -48,6 +50,18 @@ export function UserTable({ users, isLoading }: { users: any[], isLoading: boole
   
   const [editingUser, setEditingUser] = React.useState<any | null>(null)
   const [editForm, setEditForm] = React.useState({ full_name: "", phone_number: "", role: "CITIZEN", password: "" })
+
+  const {
+    searchQuery,
+    setSearchQuery,
+    sortOption,
+    setSortOption,
+    filteredData
+  } = useFilteredData({
+    initialData: users,
+    searchKeys: ['full_name', 'email', 'role', 'phone_number'],
+    titleField: 'full_name'
+  })
 
   const roleMutation = useMutation({
     mutationFn: ({ userId, role }: { userId: string, role: string }) => 
@@ -112,7 +126,17 @@ export function UserTable({ users, isLoading }: { users: any[], isLoading: boole
   }
 
   return (
-    <div className="border border-slate-100 rounded-xl overflow-hidden shadow-sm">
+    <div className="space-y-4">
+      <FilterBar 
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        sortOption={sortOption}
+        onSortChange={setSortOption}
+        placeholder="Cari berdasarkan nama, email, telepon, role..."
+        totalFiltered={filteredData.length}
+        totalItems={users?.length || 0}
+      />
+      <div className="border border-slate-100 rounded-xl overflow-hidden shadow-sm">
       <Table>
         <TableHeader className="bg-slate-50/80">
           <TableRow>
@@ -133,8 +157,8 @@ export function UserTable({ users, isLoading }: { users: any[], isLoading: boole
                 </div>
               </TableCell>
             </TableRow>
-          ) : users?.length ? (
-            users.map((u) => (
+          ) : filteredData.length ? (
+            filteredData.map((u: any) => (
               <TableRow key={u.id} className="hover:bg-slate-50/50 transition-colors">
                 <TableCell className="font-medium text-slate-900">{u.full_name}</TableCell>
                 <TableCell className="text-slate-500">{u.email}</TableCell>
@@ -188,12 +212,14 @@ export function UserTable({ users, isLoading }: { users: any[], isLoading: boole
           ) : (
              <TableRow>
               <TableCell colSpan={5} className="h-48 text-center text-slate-500">
-                Tidak ada data pengguna ditemukan.
+                {searchQuery ? "Pengguna tidak ditemukan." : "Tidak ada data pengguna ditemukan."}
               </TableCell>
             </TableRow>
           )}
         </TableBody>
       </Table>
+      </div>
+
 
       <Dialog open={!!userToDelete} onOpenChange={(open) => !open && setUserToDelete(null)}>
         <DialogContent className="sm:max-w-[425px]">

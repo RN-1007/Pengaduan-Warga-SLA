@@ -24,11 +24,25 @@ import {
 } from "@/components/ui/dialog"
 import { CreateCategoryForm } from "./create-category-form"
 import { Loader2 } from "lucide-react"
+import { FilterBar } from "@/components/ui/filter-bar"
+import { useFilteredData } from "@/hooks/use-filtered-data"
 
 export function CategoryTable({ categories, isLoading }: { categories: any[], isLoading: boolean }) {
   const queryClient = useQueryClient()
   const [editingCat, setEditingCat] = useState<any | null>(null)
   const [deletingCat, setDeletingCat] = useState<any | null>(null)
+
+  const {
+    searchQuery,
+    setSearchQuery,
+    sortOption,
+    setSortOption,
+    filteredData
+  } = useFilteredData({
+    initialData: categories,
+    searchKeys: ['name', 'description'],
+    titleField: 'name'
+  })
 
   const { mutate: toggleMutate, isPending: isToggling } = useMutation({
     mutationFn: ({ id, isActive }: { id: string, isActive: boolean }) => toggleCategoryAction(id, isActive),
@@ -54,7 +68,17 @@ export function CategoryTable({ categories, isLoading }: { categories: any[], is
   }
 
   return (
-    <div className="rounded-md border">
+    <div className="space-y-4">
+      <FilterBar 
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        sortOption={sortOption}
+        onSortChange={setSortOption}
+        placeholder="Cari berdasarkan nama atau deskripsi kategori..."
+        totalFiltered={filteredData.length}
+        totalItems={categories?.length || 0}
+      />
+      <div className="rounded-md border">
       <Table>
         <TableHeader>
           <TableRow>
@@ -64,8 +88,8 @@ export function CategoryTable({ categories, isLoading }: { categories: any[], is
           </TableRow>
         </TableHeader>
         <TableBody>
-          {categories?.length ? (
-            categories.map((cat) => (
+          {filteredData.length ? (
+            filteredData.map((cat: any) => (
               <TableRow key={cat.id}>
                 <TableCell className="font-medium text-slate-900 pl-4">{cat.name}</TableCell>
                 <TableCell className="text-slate-600">{cat.description || '-'}</TableCell>
@@ -110,7 +134,7 @@ export function CategoryTable({ categories, isLoading }: { categories: any[], is
           ) : (
             <TableRow>
               <TableCell colSpan={3} className="h-24 text-center">
-                Belum ada kategori.
+                {searchQuery ? "Kategori tidak ditemukan." : "Belum ada kategori."}
               </TableCell>
             </TableRow>
           )}
@@ -155,6 +179,7 @@ export function CategoryTable({ categories, isLoading }: { categories: any[], is
           </div>
         </DialogContent>
       </Dialog>
+      </div>
     </div>
   )
 }

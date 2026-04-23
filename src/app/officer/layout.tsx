@@ -1,10 +1,13 @@
 import { Sidebar } from "@/components/layouts/sidebar";
 
-export default function CitizenLayout({ children }: { children: React.ReactNode }) {
+export default function OfficerLayout({ children }: { children: React.ReactNode }) {
   return (
-    <div className="flex">
+    <div className="flex bg-[#f8fafc] min-h-screen selection:bg-blue-100 selection:text-blue-900">
       <Sidebar role="OFFICER" />
-      <main className="flex-1 p-8 bg-slate-50">{children}</main>
+      <main className="flex-1 h-screen overflow-y-auto w-full relative bg-slate-50">
+        <div className="absolute top-0 left-0 w-full h-80 bg-gradient-to-b from-slate-200/50 to-transparent pointer-events-none z-0" />
+        <div className="relative z-10">{children}</div>
+      </main>
     </div>
   );
 }
