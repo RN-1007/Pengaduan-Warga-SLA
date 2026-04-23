@@ -1,5 +1,7 @@
 "use client"
 
+import React from 'react'
+
 import { useQuery } from '@tanstack/react-query'
 import { getAllComplaintsAction } from '@/modules/complaints/actions/complaints.actions'
 import { AdminComplaintTable } from '@/modules/complaints/components/admin-complaint-table'
@@ -25,7 +27,7 @@ export default function SupervisorDashboardPage() {
   // Analytics
   const total = complaints?.length || 0;
   const processed = complaints?.filter(c => c.status === 'ASSIGNED' || c.status === 'IN_PROGRESS' || c.status === 'VERIFIED').length || 0;
-  const resolved = complaints?.filter(c => c.status === 'RESOLVED' || c.status === 'CLOSED').length || 0;
+  const resolved = complaints?.filter(c => c.status === 'RESOLVED').length || 0;
   const escalated = complaints?.filter(c => c.is_escalated).length || 0;
   
   const complianceRate = total > 0 ? Math.round(((total - escalated) / total) * 100) : 100;
@@ -35,15 +37,48 @@ export default function SupervisorDashboardPage() {
   let resolvedCountForAvg = 0;
   if (complaints) {
     complaints.forEach(c => {
-      if (c.status === 'RESOLVED' || c.status === 'CLOSED') {
+      // Hanya menghitung yang sudah selesai
+      if (c.status === 'RESOLVED') {
         const created = new Date(c.created_at).getTime();
-        const updated = new Date(c.updated_at).getTime();
-        totalHours += (updated - created) / (1000 * 60 * 60);
-        resolvedCountForAvg++;
+        // IDEALNYA: mencatat waktu spesifik 'resolved_at'. Karena tidak ada, gunakan updated_at.
+        const updated = new Date(c.updated_at).getTime(); 
+        
+        // Cek jika waktu valid (untuk menghindari data dummy menghasilkan waktu negatif atau absurd)
+        if (updated >= created) {
+          totalHours += (updated - created) / (1000 * 60 * 60);
+          resolvedCountForAvg++;
+        }
       }
     });
   }
-  const avgResolutionTime = resolvedCountForAvg > 0 ? (totalHours / resolvedCountForAvg).toFixed(1) : 0;
+  const avgResolutionTime = resolvedCountForAvg > 0 ? (totalHours / resolvedCountForAvg).toFixed(1) : "0";
+
+  // Weekly Stats Calculation (last 7 days of completed complaints)
+  const chartData = React.useMemo(() => {
+    const data = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      
+      const dayStr = d.toLocaleDateString('id-ID', { weekday: 'short' }); // Sen, Sel, etc.
+      
+      const count = complaints?.filter(c => {
+        if (c.status !== 'RESOLVED') return false;
+        const updateDate = new Date(c.updated_at);
+        return updateDate.getDate() === d.getDate() && 
+               updateDate.getMonth() === d.getMonth() && 
+               updateDate.getFullYear() === d.getFullYear();
+      }).length || 0;
+      
+      data.push({ day: dayStr, count, date: d });
+    }
+    
+    const maxCount = Math.max(...data.map(d => d.count), 1); // Avoid division by zero
+    return data.map(d => ({
+      ...d,
+      heightPercentage: Math.max(Math.round((d.count / maxCount) * 100), 5) // At least 5% so it's visible, unless 0? Let's just do percentage
+    }));
+  }, [complaints]);
 
   const containerVariants: any = {
     hidden: { opacity: 0 },
@@ -114,7 +149,7 @@ export default function SupervisorDashboardPage() {
             <Clock className="w-8 h-8 text-slate-400 mx-auto mb-3" />
             <h3 className="text-sm font-semibold text-slate-500 mb-1">Rata-rata Penyelesaian</h3>
             <div className="text-4xl font-extrabold text-slate-800">{avgResolutionTime}</div>
-            <p className="text-xs text-slate-400 mt-1">Jam per pengaduan</p>
+            <p className="text-xs text-slate-400 mt-1">Jam per pengaduan selesai</p>
           </div>
         </motion.div>
 
@@ -122,23 +157,25 @@ export default function SupervisorDashboardPage() {
         <motion.div variants={itemVariants} className="bg-white rounded-2xl shadow-sm border border-slate-100 md:col-span-2 p-6 relative overflow-hidden">
           <h3 className="text-sm font-semibold text-slate-500 mb-4 flex items-center gap-2">
             <BarChart3 className="w-4 h-4 text-slate-400" />
-            Statistik Kinerja Mingguan
+            Statistik Penyelesaian 7 Hari Terakhir
           </h3>
           <div className="h-32 flex items-end gap-2 mt-4">
-            {[40, 70, 50, 90, 60, 100].map((h, i) => (
+            {chartData.map((d, i) => (
               <div 
                 key={i}
-                className="bg-gradient-to-t from-blue-500 to-indigo-400 w-1/6 rounded-t-lg hover:from-blue-600 hover:to-indigo-500 transition-colors cursor-pointer relative group/bar" 
-                style={{ height: `${h}%` }}
+                className="bg-gradient-to-t from-blue-500 to-indigo-400 flex-1 rounded-t-lg hover:from-blue-600 hover:to-indigo-500 transition-colors cursor-pointer relative group/bar" 
+                style={{ height: d.count > 0 ? `${d.heightPercentage}%` : '5%' }}
               >
                 <div className="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold text-slate-700 opacity-0 group-hover/bar:opacity-100 transition-opacity">
-                  {h}%
+                  {d.count} <span className="font-normal text-[10px]">selesai</span>
                 </div>
               </div>
             ))}
           </div>
           <div className="flex justify-between text-xs text-slate-400 mt-3 px-1">
-            <span>Sen</span><span>Sel</span><span>Rab</span><span>Kam</span><span>Jum</span><span>Sab</span>
+            {chartData.map((d, i) => (
+              <span key={i} className="flex-1 text-center truncate">{d.day}</span>
+            ))}
           </div>
         </motion.div>
       </motion.div>

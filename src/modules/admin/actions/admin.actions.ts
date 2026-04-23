@@ -10,6 +10,22 @@ const getAdminSupabase = () => {
   );
 };
 
+async function upsertSlaRules(supabase: ReturnType<typeof getAdminSupabase>, categoryId: string, data: CreateCategoryFormData) {
+  // Hapus rules lama
+  await supabase.from('sla_rules').delete().eq('category_id', categoryId);
+
+  // Sisipkan rules baru
+  const rules = [
+    { category_id: categoryId, priority: 'LOW', resolution_time_hours: data.sla_low },
+    { category_id: categoryId, priority: 'MEDIUM', resolution_time_hours: data.sla_medium },
+    { category_id: categoryId, priority: 'HIGH', resolution_time_hours: data.sla_high },
+    { category_id: categoryId, priority: 'EMERGENCY', resolution_time_hours: data.sla_emergency },
+  ];
+
+  const { error } = await supabase.from('sla_rules').insert(rules);
+  if (error) throw new Error(error.message);
+}
+
 export async function createCategoryAction(data: CreateCategoryFormData) {
   const supabase = getAdminSupabase();
 
@@ -27,6 +43,9 @@ export async function createCategoryAction(data: CreateCategoryFormData) {
   if (catError) {
     throw new Error(catError.message);
   }
+
+  // 2. Insert SLA Rules
+  await upsertSlaRules(supabase, category.id, data);
 
   return category;
 }
@@ -50,7 +69,7 @@ export async function getCategoriesAction() {
   const supabase = getAdminSupabase();
   const { data, error } = await supabase
     .from('complaint_categories')
-    .select(`*`)
+    .select(`*, sla_rules ( priority, resolution_time_hours )`)
     .order('created_at', { ascending: false });
 
   if (error) {
@@ -61,6 +80,10 @@ export async function getCategoriesAction() {
 
 export async function deleteCategoryAction(id: string) {
   const supabase = getAdminSupabase();
+  
+  // Hapus SLA rules terkait dulu
+  await supabase.from('sla_rules').delete().eq('category_id', id);
+  
   const { error } = await supabase
     .from('complaint_categories')
     .delete()
@@ -71,7 +94,7 @@ export async function deleteCategoryAction(id: string) {
   }
 }
 
-export async function editCategoryAction(id: string, data: Pick<CreateCategoryFormData, 'name' | 'description'>) {
+export async function editCategoryAction(id: string, data: CreateCategoryFormData) {
   const supabase = getAdminSupabase();
   const { data: updated, error } = await supabase
     .from('complaint_categories')
@@ -86,5 +109,9 @@ export async function editCategoryAction(id: string, data: Pick<CreateCategoryFo
   if (error) {
     throw new Error(error.message);
   }
+
+  // Update SLA rules
+  await upsertSlaRules(supabase, id, data);
+
   return updated;
 }

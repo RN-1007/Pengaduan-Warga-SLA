@@ -132,8 +132,8 @@ export function AdminComplaintTable({ complaints, isLoading }: { complaints: any
                             <DropdownMenuItem onClick={() => handleUpdateStatus(c.id, 'VERIFIED', 'HIGH')}>
                               Kustom Prioritas HIGH & Verifikasi
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => handleUpdateStatus(c.id, 'CLOSED')}>
-                              Tolak (Tutup) Laporan
+                            <DropdownMenuItem onClick={() => handleUpdateStatus(c.id, 'RESOLVED')}>
+                              Tolak / Selesai Laporan
                             </DropdownMenuItem>
                           </>
                         )}

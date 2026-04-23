@@ -1,14 +1,25 @@
 "use client"
 
+import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { authService } from '@/modules/auth/services/auth.service'
 import { getComplaintsByCitizenAction } from '@/modules/complaints/actions/complaints.actions'
+import { PlusCircle, ClipboardList, MapPin, Calendar, ChevronRight, FileText, LayoutDashboard } from 'lucide-react'
 import { useRouter } from 'next/navigation'
-import { PlusCircle, ClipboardList, MapPin, Calendar, ChevronRight, FileText } from 'lucide-react'
-import { useState } from 'react'
 import { ComplaintDetailModal } from '@/modules/complaints/components/complaint-detail-modal'
+import { FilterBar } from "@/components/ui/filter-bar"
+import { useFilteredData } from "@/hooks/use-filtered-data"
+import { getStatusStyle } from '@/utils/status-styles'
 import { motion } from 'framer-motion'
 
+import { Button } from '@/components/ui/button'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
 import {
   Table,
   TableBody,
@@ -17,22 +28,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog"
 import { CreateComplaintForm } from '@/modules/complaints/components/create-complaint-form'
 
-import { FilterBar } from "@/components/ui/filter-bar"
-import { useFilteredData } from "@/hooks/use-filtered-data"
-import { getStatusStyle } from '@/utils/status-styles'
-
-export default function CitizenHistoryPage() {
+export default function CitizenDashboardPage() {
   const router = useRouter()
   const [isDialogOpen, setIsDialogOpen] = useState(false)
   const [selectedComplaintId, setSelectedComplaintId] = useState<string | null>(null)
@@ -59,7 +57,7 @@ export default function CitizenHistoryPage() {
     searchKeys: ['title', 'location', 'complaint_categories.name', 'status'],
   });
 
-  if (!user) return <div className="p-8">Memuat riwayat...</div>
+  if (!user) return <div className="p-8">Memuat dashboard...</div>
 
   const containerVariants: any = {
     hidden: { opacity: 0 },
@@ -72,7 +70,7 @@ export default function CitizenHistoryPage() {
 
   return (
     <div className="pt-24 pb-12 w-full max-w-7xl mx-auto px-4 sm:px-6 space-y-8">
-      
+
       {/* Header */}
       <motion.div 
         initial={{ opacity: 0, y: -20 }} animate={{ opacity: 1, y: 0 }}
@@ -80,18 +78,18 @@ export default function CitizenHistoryPage() {
       >
         <div className="flex items-center gap-4">
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center text-white shadow-lg shadow-blue-600/20">
-            <FileText className="w-7 h-7" />
+            <LayoutDashboard className="w-7 h-7" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900">Riwayat Pengaduan</h1>
-            <p className="text-slate-500 text-sm mt-0.5">Daftar seluruh laporan yang pernah Anda buat</p>
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900">Dashboard Citizen</h1>
+            <p className="text-slate-500 text-sm mt-0.5">Halo, {user?.profile?.full_name || user.email}</p>
           </div>
         </div>
         <Button 
           onClick={() => setIsDialogOpen(true)} 
           className="rounded-xl h-11 bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-600/20"
         >
-          <PlusCircle className="w-4 h-4 mr-2" /> Buat Pengaduan Baru
+          <PlusCircle className="w-4 h-4 mr-2" /> Buat Pengaduan
         </Button>
       </motion.div>
 
@@ -105,7 +103,7 @@ export default function CitizenHistoryPage() {
           { label: 'Sedang Diproses', value: complaints?.filter((c: any) => c.status === 'IN_PROGRESS' || c.status === 'ASSIGNED').length || 0, color: 'from-cyan-500 to-cyan-600', bg: 'bg-cyan-50', text: 'text-cyan-700' },
           { label: 'Selesai', value: complaints?.filter((c: any) => c.status === 'RESOLVED').length || 0, color: 'from-emerald-500 to-emerald-600', bg: 'bg-emerald-50', text: 'text-emerald-700' },
           { label: 'Menunggu', value: complaints?.filter((c: any) => c.status === 'SUBMITTED' || c.status === 'VERIFIED').length || 0, color: 'from-amber-500 to-amber-600', bg: 'bg-amber-50', text: 'text-amber-700' },
-        ].map((stat, i) => (
+        ].map((stat) => (
           <motion.div 
             key={stat.label}
             variants={itemVariants}
@@ -127,9 +125,9 @@ export default function CitizenHistoryPage() {
       >
         <div className="p-6 border-b border-slate-100 flex items-center gap-2">
           <ClipboardList className="w-5 h-5 text-slate-400" />
-          <h2 className="text-lg font-semibold text-slate-800">Daftar Pengaduan</h2>
+          <h2 className="text-lg font-semibold text-slate-800">Laporan Terbaru</h2>
         </div>
-        
+
         <div className="p-6">
           <FilterBar 
             searchQuery={searchQuery}
@@ -158,12 +156,12 @@ export default function CitizenHistoryPage() {
                 <TableCell colSpan={5} className="text-center py-16 text-slate-400">
                   <div className="flex flex-col items-center gap-3">
                     <div className="w-10 h-10 rounded-full border-2 border-slate-200 border-t-blue-500 animate-spin" />
-                    <span>Mengambil data riwayat Anda...</span>
+                    <span>Memuat data...</span>
                   </div>
                 </TableCell>
               </TableRow>
             ) : filteredData.length ? (
-              filteredData.map((c: any) => {
+              filteredData.slice(0, 5).map((c: any) => {
                 const statusStyle = getStatusStyle(c.status)
                 return (
                   <TableRow 
@@ -218,7 +216,7 @@ export default function CitizenHistoryPage() {
                     <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center">
                       <ClipboardList className="w-8 h-8 text-slate-300" />
                     </div>
-                    <p className="text-sm">{searchQuery ? "Tidak ada laporan yang cocok dengan pencarian Anda." : "Belum ada laporan pengaduan yang Anda buat."}</p>
+                    <p className="text-sm">{searchQuery ? "Tidak ada laporan yang cocok." : "Belum ada laporan pengaduan."}</p>
                   </div>
                 </TableCell>
               </TableRow>
@@ -227,21 +225,23 @@ export default function CitizenHistoryPage() {
         </Table>
       </motion.div>
 
+      {/* Dialog for Creation */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[560px] max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Buat Pengaduan Baru</DialogTitle>
             <DialogDescription>
-              Isi form di bawah dengan informasi sejelas mungkin.
+              Isi form di bawah dengan informasi sejelas mungkin. Tambahkan foto bukti untuk mempercepat penanganan.
             </DialogDescription>
           </DialogHeader>
-          <CreateComplaintForm 
-            citizenId={user.id} 
-            onSuccess={() => setIsDialogOpen(false)} 
+          <CreateComplaintForm
+            citizenId={user.id}
+            onSuccess={() => setIsDialogOpen(false)}
           />
         </DialogContent>
       </Dialog>
-      
+
+      {/* Detail Modal */}
       <ComplaintDetailModal 
         complaintId={selectedComplaintId}
         isOpen={!!selectedComplaintId}

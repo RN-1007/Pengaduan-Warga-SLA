@@ -9,8 +9,18 @@ const getAdminSupabase = () => {
   );
 };
 
+import { escalationRepository } from '@/modules/complaints/repositories/escalation.repository';
+
 export async function getEscalatedComplaintsAction() {
   const supabase = getAdminSupabase();
+  
+  // Trigger cron secara dinamis untuk memastikan data selalu up-to-date saat halaman dibuka (Fallback jika crontab mati)
+  try {
+    await escalationRepository.processSlaEscalation();
+  } catch (err) {
+    console.error("Gagal sinkronasi eskalasi otomatis: ", err);
+  }
+
   const { data, error } = await supabase
     .from('complaints')
     .select(`
@@ -20,7 +30,6 @@ export async function getEscalatedComplaintsAction() {
     `)
     .eq('is_escalated', true)
     .neq('status', 'RESOLVED')
-    .neq('status', 'CLOSED')
     .order('created_at', { ascending: false });
 
   if (error) throw new Error(error.message);

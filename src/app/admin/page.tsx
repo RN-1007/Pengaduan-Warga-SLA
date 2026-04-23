@@ -33,7 +33,7 @@ export default function AdminDashboardPage() {
 
   const submitted = complaints?.filter(c => c.status === 'SUBMITTED').length || 0;
   const inProgress = complaints?.filter(c => c.status === 'ASSIGNED' || c.status === 'IN_PROGRESS').length || 0;
-  const resolved = complaints?.filter(c => c.status === 'RESOLVED' || c.status === 'CLOSED').length || 0;
+  const resolved = complaints?.filter(c => c.status === 'RESOLVED').length || 0;
   
   const containerVariants: any = {
     hidden: { opacity: 0 },

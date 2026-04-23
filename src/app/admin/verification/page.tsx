@@ -12,6 +12,7 @@ import {
     verifyComplaintAction,
     rejectComplaintAction,
 } from "@/modules/admin/actions/verification.actions";
+import { SLA_RESOLUTION_HOURS } from "@/types/database.types";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -350,30 +351,45 @@ export default function VerificationPage() {
                                                         </DialogHeader>
 
                                                         <form className="flex-1 flex flex-col space-y-5">
-                                                            <div className="space-y-2">
-                                                                <Label className="text-slate-700 font-semibold text-sm">
-                                                                    Tingkat Prioritas (SLA)
-                                                                </Label>
-                                                                <Select
-                                                                    value={activePriority[complaint.id] || "MEDIUM"}
-                                                                    onValueChange={(val) =>
-                                                                        setActivePriority((prev) => ({
-                                                                            ...prev,
-                                                                            [complaint.id]: val,
-                                                                        }))
-                                                                    }
-                                                                >
-                                                                    <SelectTrigger className="rounded-xl border-slate-200 focus:ring-blue-500 h-10">
-                                                                        <SelectValue placeholder="Pilih prioritas" />
-                                                                    </SelectTrigger>
-                                                                    <SelectContent className="rounded-xl">
-                                                                        <SelectItem value="LOW">🟢 Rendah (SLA 72 Jam)</SelectItem>
-                                                                        <SelectItem value="MEDIUM">🟡 Sedang (SLA 48 Jam)</SelectItem>
-                                                                        <SelectItem value="HIGH">🟠 Tinggi (SLA 24 Jam)</SelectItem>
-                                                                        <SelectItem value="EMERGENCY">🔴 Darurat (SLA 6 Jam)</SelectItem>
-                                                                    </SelectContent>
-                                                                </Select>
-                                                            </div>
+                                                            {(() => {
+                                                                const currentCatId = activeCategoryId[complaint.id] || complaint.category_id;
+                                                                const currentCat = categories?.find((c: any) => c.id === currentCatId);
+                                                                const rules = currentCat?.sla_rules || [];
+                                                                const getSla = (p: string) => rules.find((r: any) => r.priority === p)?.resolution_time_hours;
+                                                                const slaVals = {
+                                                                    LOW: getSla('LOW') ?? SLA_RESOLUTION_HOURS.LOW,
+                                                                    MEDIUM: getSla('MEDIUM') ?? SLA_RESOLUTION_HOURS.MEDIUM,
+                                                                    HIGH: getSla('HIGH') ?? SLA_RESOLUTION_HOURS.HIGH,
+                                                                    EMERGENCY: getSla('EMERGENCY') ?? SLA_RESOLUTION_HOURS.EMERGENCY,
+                                                                };
+
+                                                                return (
+                                                                    <div className="space-y-2">
+                                                                        <Label className="text-slate-700 font-semibold text-sm">
+                                                                            Tingkat Prioritas (SLA)
+                                                                        </Label>
+                                                                        <Select
+                                                                            value={activePriority[complaint.id] || "MEDIUM"}
+                                                                            onValueChange={(val) =>
+                                                                                setActivePriority((prev) => ({
+                                                                                    ...prev,
+                                                                                    [complaint.id]: val,
+                                                                                }))
+                                                                            }
+                                                                        >
+                                                                            <SelectTrigger className="rounded-xl border-slate-200 focus:ring-blue-500 h-10">
+                                                                                <SelectValue placeholder="Pilih prioritas" />
+                                                                            </SelectTrigger>
+                                                                            <SelectContent className="rounded-xl">
+                                                                                <SelectItem value="LOW">🟢 Rendah (SLA {slaVals.LOW} Jam)</SelectItem>
+                                                                                <SelectItem value="MEDIUM">🟡 Sedang (SLA {slaVals.MEDIUM} Jam)</SelectItem>
+                                                                                <SelectItem value="HIGH">🟠 Tinggi (SLA {slaVals.HIGH} Jam)</SelectItem>
+                                                                                <SelectItem value="EMERGENCY">🔴 Darurat (SLA {slaVals.EMERGENCY} Jam)</SelectItem>
+                                                                            </SelectContent>
+                                                                        </Select>
+                                                                    </div>
+                                                                )
+                                                            })()}
 
                                                             <div className="space-y-2">
                                                                 <Label className="text-slate-700 font-semibold text-sm">

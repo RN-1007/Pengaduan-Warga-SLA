@@ -14,7 +14,7 @@ export async function getActiveCategoriesAction() {
   const supabase = getAdminSupabase();
   const { data, error } = await supabase
     .from('complaint_categories')
-    .select('id, name, description')
+    .select('id, name, description, sla_rules ( priority, resolution_time_hours )')
     .eq('is_active', true)
     .order('name', { ascending: true });
     
@@ -203,10 +203,10 @@ export async function submitRatingAndCloseAction(payload: {
 
   if (ratingError) throw new Error(ratingError.message);
 
-  // 2. Update complaint status to CLOSED
+  // 2. Update complaint status to RESOLVED
   const { error: updateError } = await supabase
     .from('complaints')
-    .update({ status: 'CLOSED', updated_at: new Date().toISOString() })
+    .update({ status: 'RESOLVED', updated_at: new Date().toISOString() })
     .eq('id', payload.complaintId);
 
   if (updateError) throw new Error(updateError.message);
@@ -215,7 +215,7 @@ export async function submitRatingAndCloseAction(payload: {
   await supabase.from('complaint_updates').insert({
     complaint_id: payload.complaintId,
     officer_id: payload.citizenId,
-    notes: `[DITUTUP] Citizen memberikan rating ${payload.score}/5 dan menutup laporan.`,
+    notes: `[SELESAI] Citizen memberikan rating ${payload.score}/5 dan me-review penanganan.`,
   });
 
   return true;

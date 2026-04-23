@@ -51,7 +51,7 @@ export default function AdminCategoriesPage() {
       </motion.div>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
             <DialogTitle>Buat Kategori Baru</DialogTitle>
             <DialogDescription>

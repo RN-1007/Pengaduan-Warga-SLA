@@ -8,7 +8,6 @@ export function getStatusStyle(status: string) {
     case 'ASSIGNED': return { label: 'Ditugaskan', className: 'bg-indigo-50 text-indigo-700 border-indigo-200' }
     case 'IN_PROGRESS': return { label: 'Diproses', className: 'bg-cyan-50 text-cyan-700 border-cyan-200' }
     case 'RESOLVED': return { label: 'Selesai', className: 'bg-emerald-50 text-emerald-700 border-emerald-200' }
-    case 'CLOSED': return { label: 'Ditutup', className: 'bg-slate-100 text-slate-500 border-slate-200' }
     default: return { label: status, className: 'bg-slate-50 text-slate-700 border-slate-200' }
   }
 }

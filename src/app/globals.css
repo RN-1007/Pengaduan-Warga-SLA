@@ -57,3 +57,56 @@
     color: hsl(var(--foreground));
   }
 }
+
+/* =========================================
+   SCROLLBAR & LAYOUT JIGGLE FIXES
+   ========================================= */
+
+/* Use stable gutter to prevent page jump when Radix UI hides scroll on Dropdowns/Modals */
+html {
+  scrollbar-gutter: stable;
+}
+
+/* Bruteforce zero-padding against Radix UI's scroll lock that causes the Hero to jiggle */
+:root {
+  --removed-body-scroll-bar-size: 0px !important;
+}
+
+body[data-scroll-locked],
+html[data-scroll-locked],
+body[style*="padding-right"] {
+  padding-right: 0 !important;
+  margin-right: 0 !important;
+}
+
+body[data-scroll-locked] .fixed {
+  padding-right: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Custom Minimalist & Transparent Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 10px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.3);
+}
+
+.dark ::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+}
+
+.dark ::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}

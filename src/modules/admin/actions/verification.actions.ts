@@ -31,13 +31,25 @@ export async function verifyComplaintAction(payload: {
   notes?: string;
 }) {
   const supabase = getAdminSupabase();
-  
-  const slaHours = SLA_RESOLUTION_HOURS[payload.priority] || 72;
+
+  // 1. Query SLA rule dari database berdasarkan kategori + prioritas
+  const { data: slaRule } = await supabase
+    .from('sla_rules')
+    .select('resolution_time_hours')
+    .eq('category_id', payload.categoryId)
+    .eq('priority', payload.priority)
+    .single();
+
+  // 2. Gunakan jam dari DB, fallback ke default global jika belum diatur
+  const slaHours = slaRule?.resolution_time_hours
+    ?? SLA_RESOLUTION_HOURS[payload.priority]
+    ?? 72;
+
   const deadline = addHours(new Date(), slaHours).toISOString();
 
   const { error: updateError } = await supabase
     .from('complaints')
-    .update({ 
+    .update({
       status: 'VERIFIED',
       priority: payload.priority,
       category_id: payload.categoryId,
@@ -48,8 +60,8 @@ export async function verifyComplaintAction(payload: {
 
   if (updateError) throw new Error(updateError.message);
 
-  const logNotes = payload.notes 
-    ? `[VERIFIKASI] Diterima dengan catatan: ${payload.notes}` 
+  const logNotes = payload.notes
+    ? `[VERIFIKASI] Diterima dengan catatan: ${payload.notes}`
     : `[VERIFIKASI] Laporan diterima. Prioritas: ${payload.priority}`;
 
   await supabase.from('complaint_updates').insert({
@@ -70,7 +82,7 @@ export async function rejectComplaintAction(payload: {
 
   const { error } = await supabase
     .from('complaints')
-    .update({ status: 'CLOSED', updated_at: new Date().toISOString() })
+    .update({ status: 'RESOLVED', updated_at: new Date().toISOString() })
     .eq('id', payload.complaintId);
 
   if (error) throw new Error(error.message);

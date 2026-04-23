@@ -51,7 +51,7 @@ export function ComplaintDetailModal({
   const { data: rating } = useQuery({
     queryKey: ['rating', complaintId],
     queryFn: () => ratingService.getRating(complaintId as string),
-    enabled: !!complaintId && complaint?.status === 'CLOSED'
+    enabled: !!complaintId && complaint?.status === 'RESOLVED'
   })
 
   async function handleDelete() {
@@ -207,7 +207,7 @@ export function ComplaintDetailModal({
                  </div>
 
                  {/* Timeline / Rating */}
-                 {(complaint.status === 'RESOLVED' || complaint.status === 'CLOSED') ? (
+                 {complaint.status === 'RESOLVED' ? (
                     <RatingSection complaint={complaint} rating={rating} userId={user?.id || ''} />
                   ) : (
                     <div>
@@ -309,7 +309,7 @@ function RatingSection({ complaint, rating, userId }: { complaint: any; rating: 
             ))}
           </div>
           {rating.feedback && <p className="text-sm text-slate-300 italic mt-1">&quot;{rating.feedback}&quot;</p>}
-          <p className="text-xs text-slate-500 mt-3">Laporan telah ditutup.</p>
+          <p className="text-xs text-slate-500 mt-3">Laporan telah selesai dan dinilai.</p>
         </div>
       </div>
     )
@@ -322,7 +322,7 @@ function RatingSection({ complaint, rating, userId }: { complaint: any; rating: 
         <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">🌟 Berikan Penilaian</h4>
         <div className="bg-gradient-to-br from-emerald-50 to-teal-50 rounded-xl p-4 border border-emerald-200">
           <p className="text-sm text-emerald-800 font-medium mb-3">
-            Masalah Anda telah diselesaikan! Berikan rating untuk menutup laporan ini.
+            Masalah Anda telah ditangani penyelesaiannya! Berikan rating mengenai tanggapan kami terhadap laporan ini.
           </p>
           {/* Star Rating */}
           <div className="flex gap-1 mb-3">
@@ -352,7 +352,7 @@ function RatingSection({ complaint, rating, userId }: { complaint: any; rating: 
             onClick={() => ratingMutation.mutate()}
             disabled={ratingMutation.isPending}
           >
-            {ratingMutation.isPending ? "Mengirim..." : `Kirim Rating & Tutup Laporan`}
+            {ratingMutation.isPending ? "Mengirim..." : `Kirim Penilaian Laporan`}
           </Button>
         </div>
       </div>
@@ -364,7 +364,7 @@ function RatingSection({ complaint, rating, userId }: { complaint: any; rating: 
     <div>
       <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Status</h4>
       <div className="py-3 px-4 bg-slate-50 rounded-xl border border-slate-200 text-sm text-slate-500">
-        Laporan ini telah ditutup.
+        Laporan ini telah selesai namun tidak ada penilaian.
       </div>
     </div>
   )

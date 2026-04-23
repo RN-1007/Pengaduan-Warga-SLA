@@ -11,7 +11,7 @@ export const createComplaintSchema = z.object({
 export type CreateComplaintFormData = z.infer<typeof createComplaintSchema>;
 
 export const updateComplaintStatusSchema = z.object({
-  status: z.enum(['VERIFIED', 'ASSIGNED', 'IN_PROGRESS', 'RESOLVED', 'CLOSED']),
+  status: z.enum(['VERIFIED', 'ASSIGNED', 'IN_PROGRESS', 'RESOLVED']),
   priority: z.enum(['LOW', 'MEDIUM', 'HIGH', 'EMERGENCY']).optional(),
   officer_id: z.string().uuid().optional(),
   notes: z.string().optional(),

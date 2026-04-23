@@ -3,7 +3,7 @@
 // ENUMS
 export type UserRole = 'CITIZEN' | 'ADMIN' | 'OFFICER' | 'SUPERVISOR';
 export type ComplaintPriority = 'LOW' | 'MEDIUM' | 'HIGH' | 'EMERGENCY';
-export type ComplaintStatus = 'SUBMITTED' | 'VERIFIED' | 'ASSIGNED' | 'IN_PROGRESS' | 'RESOLVED' | 'CLOSED';
+export type ComplaintStatus = 'SUBMITTED' | 'VERIFIED' | 'ASSIGNED' | 'IN_PROGRESS' | 'RESOLVED';
 
 export const SLA_RESOLUTION_HOURS: Record<ComplaintPriority, number> = {
   LOW: 72,

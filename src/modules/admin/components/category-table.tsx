@@ -142,20 +142,31 @@ export function CategoryTable({ categories, isLoading }: { categories: any[], is
       </Table>
 
       <Dialog open={!!editingCat} onOpenChange={(open) => !open && setEditingCat(null)}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="sm:max-w-[600px]">
           <DialogHeader>
             <DialogTitle>Edit Kategori</DialogTitle>
             <DialogDescription>
               Perbarui informasi nama dan deskripsi kategori.
             </DialogDescription>
           </DialogHeader>
-          {editingCat && (
-            <CreateCategoryForm 
-              categoryId={editingCat.id} 
-              initialData={{ name: editingCat.name, description: editingCat.description }} 
-              onSuccess={() => setEditingCat(null)} 
-            />
-          )}
+          {editingCat && (() => {
+            const rules = editingCat.sla_rules || [];
+            const getSla = (p: string) => rules.find((r: any) => r.priority === p)?.resolution_time_hours;
+            return (
+              <CreateCategoryForm 
+                categoryId={editingCat.id} 
+                initialData={{ 
+                  name: editingCat.name, 
+                  description: editingCat.description,
+                  sla_low: getSla('LOW'),
+                  sla_medium: getSla('MEDIUM'),
+                  sla_high: getSla('HIGH'),
+                  sla_emergency: getSla('EMERGENCY'),
+                }} 
+                onSuccess={() => setEditingCat(null)} 
+              />
+            );
+          })()}
         </DialogContent>
       </Dialog>
 

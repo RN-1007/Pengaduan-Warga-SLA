@@ -62,7 +62,7 @@ export const verificationService = {
 
     const { error } = await supabase
       .from('complaints')
-      .update({ status: 'CLOSED', updated_at: new Date().toISOString() })
+      .update({ status: 'RESOLVED', updated_at: new Date().toISOString() })
       .eq('id', payload.complaintId)
 
     if (error) throw new Error(error.message)
@@ -70,7 +70,7 @@ export const verificationService = {
     await supabase.from('complaint_updates').insert({
       complaint_id: payload.complaintId,
       officer_id: payload.adminId,
-      status: 'CLOSED',
+      status: 'RESOLVED',
       notes: `[DITOLAK] ${payload.reason}`,
     })
 
