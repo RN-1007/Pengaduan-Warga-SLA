@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { motion, Variants } from "framer-motion";
 import { ArrowRight, ShieldCheck, Clock, Activity, Users, SendToBack, MapPin } from "lucide-react";
+import { BlobCursor } from "@/components/ui/blob-cursor";
 
 export default function LandingPage() {
   const containerVariants: Variants = {
@@ -22,6 +23,7 @@ export default function LandingPage() {
 
   return (
     <div className="relative min-h-screen bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-900 overflow-x-hidden font-sans w-full">
+      <BlobCursor />
       
       {/* Background Decor */}
       <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-50/50 blur-[120px] -z-10" />
