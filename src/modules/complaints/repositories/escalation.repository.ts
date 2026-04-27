@@ -25,7 +25,8 @@ export const escalationRepository = {
       .select('id, title')
       .lt('sla_deadline', now)
       .eq('is_escalated', false)
-      .not('status', 'in', '("RESOLVED", "CLOSED")')
+      .neq('status', 'RESOLVED')
+      .neq('status', 'CLOSED')
 
     if (error) throw error
     if (!overdue || overdue.length === 0) return { escalated: 0 }
