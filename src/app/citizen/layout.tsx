@@ -1,10 +1,10 @@
 import { CitizenNavbar } from "@/components/layouts/citizen-navbar";
-import { BlobCursor } from "@/components/ui/blob-cursor";
+import RippleCursor from "@/components/ui/ripple-cursor";
 
 export default function CitizenLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="relative min-h-screen bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-900 overflow-x-hidden font-sans w-full">
-      <BlobCursor />
+      <RippleCursor />
       {/* Background Decor aligned to Landing Page Theme */}
       <div className="fixed top-[-10%] left-[-10%] w-[50%] h-[50%] rounded-full bg-blue-50/50 blur-[120px] -z-10 pointer-events-none" />
       <div className="fixed bottom-[20%] right-[-10%] w-[40%] h-[50%] rounded-full bg-indigo-50/50 blur-[100px] -z-10 pointer-events-none" />

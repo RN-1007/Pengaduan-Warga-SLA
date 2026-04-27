@@ -5,7 +5,7 @@ import { getComplaintDetailAction, deleteComplaintAction, submitRatingAndCloseAc
 import { ratingService } from '@/modules/complaints/services/rating.service'
 import { authService } from '@/modules/auth/services/auth.service'
 import { EditComplaintForm } from '@/modules/complaints/components/edit-complaint-form'
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { toast } from "sonner"
 import { StarIcon } from 'lucide-react'
 import { Textarea } from "@/components/ui/textarea"
@@ -20,7 +20,7 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog"
-import { MapPin, Calendar, AlertTriangle, User, Edit, Trash2, Image as ImageIcon } from 'lucide-react'
+import { MapPin, Calendar, AlertTriangle, User, Edit, Trash2, Image as ImageIcon, Clock } from 'lucide-react'
 import { useQueryClient } from "@tanstack/react-query"
 
 
@@ -70,6 +70,7 @@ export function ComplaintDetailModal({
   return (
     <Dialog open={isOpen} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="sm:max-w-[860px] p-0 overflow-hidden rounded-2xl border-slate-200 shadow-xl max-h-[90vh]">
+        <DialogTitle className="sr-only">Detail Pengaduan</DialogTitle>
         {!complaint && !complaintError && isLoading ? (
           <div className="p-20 text-center text-slate-500 flex flex-col items-center justify-center min-h-[520px]">
              <div className="w-10 h-10 rounded-full border-4 border-slate-200 border-t-blue-600 animate-spin mb-4"></div>
@@ -209,6 +210,11 @@ export function ComplaintDetailModal({
                  {/* Timeline / Rating */}
                  {complaint.status === 'RESOLVED' ? (
                     <RatingSection complaint={complaint} rating={rating} userId={user?.id || ''} />
+                  ) : complaint.status === 'IN_PROGRESS' || complaint.status === 'ASSIGNED' ? (
+                    <div>
+                      <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Batas Waktu SLA</h4>
+                      <SlaTimer deadline={complaint.sla_deadline} />
+                    </div>
                   ) : (
                     <div>
                       <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-2">Linimasa</h4>
@@ -366,6 +372,58 @@ function RatingSection({ complaint, rating, userId }: { complaint: any; rating: 
       <div className="py-3 px-4 bg-slate-50 rounded-xl border border-slate-200 text-sm text-slate-500">
         Laporan ini telah selesai namun tidak ada penilaian.
       </div>
+    </div>
+  )
+}
+
+// ─── SLA Timer Component ────────────────────────────
+function SlaTimer({ deadline }: { deadline: string | null }) {
+  const [timeLeft, setTimeLeft] = useState<{ hours: number, mins: number, secs: number, isOverdue: boolean } | null>(null);
+
+  useEffect(() => {
+    if (!deadline) return;
+    
+    const calculateTime = () => {
+      const diff = new Date(deadline).getTime() - new Date().getTime();
+      if (diff <= 0) {
+        setTimeLeft({ hours: 0, mins: 0, secs: 0, isOverdue: true });
+      } else {
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const mins = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        const secs = Math.floor((diff % (1000 * 60)) / 1000);
+        setTimeLeft({ hours, mins, secs, isOverdue: false });
+      }
+    };
+
+    calculateTime(); // initial calculate
+    const interval = setInterval(calculateTime, 1000);
+    return () => clearInterval(interval);
+  }, [deadline]);
+
+  if (!deadline) return (
+    <div className="py-3 text-center bg-slate-50 border border-dashed border-slate-200 rounded-xl text-sm text-slate-500">
+      Batas waktu belum ditetapkan
+    </div>
+  );
+  
+  if (!timeLeft) return (
+    <div className="py-4 text-center bg-slate-50 border border-slate-200 rounded-xl text-sm text-slate-500 animate-pulse">
+      Menghitung sisa waktu...
+    </div>
+  );
+
+  return (
+    <div className={`py-4 flex flex-col items-center justify-center text-center rounded-xl border relative overflow-hidden ${timeLeft.isOverdue ? 'bg-red-50 border-red-200' : 'bg-blue-50 border-blue-200'}`}>
+       {timeLeft.isOverdue && <div className="absolute inset-0 bg-red-500/10 animate-pulse pointer-events-none" />}
+       <Clock className={`w-6 h-6 mb-2 relative z-10 ${timeLeft.isOverdue ? 'text-red-500 animate-bounce' : 'text-blue-500'}`} />
+       
+       <div className={`text-2xl font-black tracking-tight relative z-10 tabular-nums ${timeLeft.isOverdue ? 'text-red-600' : 'text-blue-600'}`}>
+         {timeLeft.isOverdue ? 'KEDALUWARSA' : `${String(timeLeft.hours).padStart(2, '0')}:${String(timeLeft.mins).padStart(2, '0')}:${String(timeLeft.secs).padStart(2, '0')}`}
+       </div>
+       
+       <p className={`text-[11px] font-bold mt-1 uppercase tracking-wider relative z-10 ${timeLeft.isOverdue ? 'text-red-500' : 'text-blue-600/70'}`}>
+         {timeLeft.isOverdue ? 'SLA Terlewati - Masuk Eskalasi' : 'Sisa Waktu Pengerjaan'}
+       </p>
     </div>
   )
 }
