@@ -4,7 +4,7 @@ import { useQuery } from '@tanstack/react-query'
 import { authService } from '@/modules/auth/services/auth.service'
 import { getComplaintsByCitizenAction } from '@/modules/complaints/actions/complaints.actions'
 import { useRouter } from 'next/navigation'
-import { PlusCircle, ClipboardList, MapPin, Calendar, ChevronRight, FileText } from 'lucide-react'
+import { PlusCircle, ClipboardList, MapPin, Calendar, ChevronRight, FileText, ChevronLeft } from 'lucide-react'
 import { useState } from 'react'
 import { ComplaintDetailModal } from '@/modules/complaints/components/complaint-detail-modal'
 import { motion } from 'framer-motion'
@@ -59,6 +59,12 @@ export default function CitizenHistoryPage() {
     searchKeys: ['title', 'location', 'complaint_categories.name', 'status'],
   });
 
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const safePage = Math.min(currentPage, Math.max(1, totalPages));
+  const currentData = filteredData.slice((safePage - 1) * itemsPerPage, safePage * itemsPerPage);
+
   if (!user) return <div className="p-8">Memuat riwayat...</div>
 
   const containerVariants: any = {
@@ -89,7 +95,7 @@ export default function CitizenHistoryPage() {
         </div>
         <Button 
           onClick={() => setIsDialogOpen(true)} 
-          className="rounded-xl h-11 bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-600/20"
+          className="hidden md:flex rounded-xl h-11 bg-blue-600 hover:bg-blue-700 shadow-lg shadow-blue-600/20"
         >
           <PlusCircle className="w-4 h-4 mr-2" /> Buat Pengaduan Baru
         </Button>
@@ -98,7 +104,7 @@ export default function CitizenHistoryPage() {
       {/* Stats */}
       <motion.div 
         variants={containerVariants} initial="hidden" animate="visible"
-        className="grid gap-4 md:grid-cols-4"
+        className="grid grid-cols-2 gap-3 md:gap-4 md:grid-cols-4"
       >
         {[
           { label: 'Total Laporan', value: complaints?.length || 0, color: 'from-blue-500 to-blue-600', bg: 'bg-blue-50', text: 'text-blue-700' },
@@ -109,12 +115,12 @@ export default function CitizenHistoryPage() {
           <motion.div 
             key={stat.label}
             variants={itemVariants}
-            className="bg-white rounded-2xl p-5 shadow-sm border border-slate-100 relative overflow-hidden group"
+            className="bg-white rounded-2xl p-4 md:p-5 shadow-sm border border-slate-100 relative overflow-hidden group"
           >
-            <div className={`absolute -right-4 -top-4 w-20 h-20 ${stat.bg} rounded-full group-hover:scale-150 transition-transform duration-500 ease-out`} />
+            <div className={`absolute -right-4 -top-4 w-16 h-16 md:w-20 md:h-20 ${stat.bg} rounded-full group-hover:scale-150 transition-transform duration-500 ease-out`} />
             <div className="relative z-10">
-              <p className="text-sm font-medium text-slate-500 mb-1">{stat.label}</p>
-              <h2 className={`text-3xl font-bold ${stat.text}`}>{stat.value}</h2>
+              <p className="text-xs md:text-sm font-medium text-slate-500 mb-1 truncate">{stat.label}</p>
+              <h2 className={`text-2xl md:text-3xl font-bold ${stat.text}`}>{stat.value}</h2>
             </div>
           </motion.div>
         ))}
@@ -142,96 +148,192 @@ export default function CitizenHistoryPage() {
           />
         </div>
 
-        <Table>
-          <TableHeader>
-            <TableRow className="bg-slate-50/80 border-y border-slate-100">
-              <TableHead className="font-semibold text-slate-600 text-xs uppercase tracking-wider pl-6">Judul Pengaduan</TableHead>
-              <TableHead className="font-semibold text-slate-600 text-xs uppercase tracking-wider">Kategori</TableHead>
-              <TableHead className="font-semibold text-slate-600 text-xs uppercase tracking-wider hidden md:table-cell">Lokasi</TableHead>
-              <TableHead className="font-semibold text-slate-600 text-xs uppercase tracking-wider">Status</TableHead>
-              <TableHead className="font-semibold text-slate-600 text-xs uppercase tracking-wider text-right pr-6">Tanggal</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {isLoading ? (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center py-16 text-slate-400">
-                  <div className="flex flex-col items-center gap-3">
-                    <div className="w-10 h-10 rounded-full border-2 border-slate-200 border-t-blue-500 animate-spin" />
-                    <span>Mengambil data riwayat Anda...</span>
-                  </div>
-                </TableCell>
+        {/* Desktop Table View */}
+        <div className="hidden md:block">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-slate-50/80 border-y border-slate-100">
+                <TableHead className="font-semibold text-slate-600 text-xs uppercase tracking-wider pl-6">Judul Pengaduan</TableHead>
+                <TableHead className="font-semibold text-slate-600 text-xs uppercase tracking-wider">Kategori</TableHead>
+                <TableHead className="font-semibold text-slate-600 text-xs uppercase tracking-wider">Lokasi</TableHead>
+                <TableHead className="font-semibold text-slate-600 text-xs uppercase tracking-wider">Status</TableHead>
+                <TableHead className="font-semibold text-slate-600 text-xs uppercase tracking-wider text-right pr-6">Tanggal</TableHead>
               </TableRow>
-            ) : filteredData.length ? (
-              filteredData.map((c: any) => {
+            </TableHeader>
+            <TableBody>
+              {isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-16 text-slate-400">
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="w-10 h-10 rounded-full border-2 border-slate-200 border-t-blue-500 animate-spin" />
+                      <span>Mengambil data riwayat Anda...</span>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : currentData.length ? (
+                currentData.map((c: any) => {
+                  const statusStyle = getStatusStyle(c.status)
+                  return (
+                    <TableRow 
+                      key={c.id} 
+                      className="cursor-pointer hover:bg-blue-50/40 transition-colors group border-b border-slate-50 last:border-0"
+                      onClick={() => setSelectedComplaintId(c.id)}
+                    >
+                      <TableCell className="font-medium text-slate-900 pl-6">
+                        <div className="flex items-center gap-3">
+                          <div className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center group-hover:bg-blue-100 transition-colors flex-shrink-0">
+                            <FileText className="w-4 h-4 text-slate-400 group-hover:text-blue-500 transition-colors" />
+                          </div>
+                          <span className="truncate max-w-[200px]">{c.title}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-slate-100 text-xs font-medium text-slate-600">
+                          {c.complaint_categories?.name || '-'}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-1.5 text-slate-500 text-sm">
+                          <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
+                          <span className="truncate max-w-[160px]">{c.location}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold border ${statusStyle.className}`}>
+                          {statusStyle.label}
+                        </span>
+                      </TableCell>
+                      <TableCell className="text-right pr-6">
+                        <div className="flex items-center justify-end gap-2 text-slate-400 text-sm">
+                          <Calendar className="w-3.5 h-3.5" />
+                          <span className="tabular-nums">
+                            {new Date(c.created_at).toLocaleDateString('id-ID', {
+                              day: 'numeric',
+                              month: 'short',
+                              year: 'numeric'
+                            })}
+                          </span>
+                          <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity text-blue-500" />
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )
+                })
+              ) : (
+                <TableRow>
+                  <TableCell colSpan={5} className="text-center py-16 text-slate-400">
+                    <div className="flex flex-col items-center gap-3">
+                      <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center">
+                        <ClipboardList className="w-8 h-8 text-slate-300" />
+                      </div>
+                      <p className="text-sm">{searchQuery ? "Tidak ada laporan yang cocok dengan pencarian Anda." : "Belum ada laporan pengaduan yang Anda buat."}</p>
+                    </div>
+                  </TableCell>
+                </TableRow>
+              )}
+            </TableBody>
+          </Table>
+        </div>
+
+        {/* Mobile Cards View */}
+        <div className="md:hidden flex flex-col px-4 pb-4 bg-slate-50/50 pt-2">
+          {isLoading ? (
+            <div className="flex flex-col items-center gap-3 py-10 text-slate-400">
+              <div className="w-8 h-8 rounded-full border-2 border-slate-200 border-t-blue-500 animate-spin" />
+              <span className="text-sm">Memuat data...</span>
+            </div>
+          ) : currentData.length ? (
+            <div className="space-y-3">
+              {currentData.map((c: any) => {
                 const statusStyle = getStatusStyle(c.status)
                 return (
-                  <TableRow 
-                    key={c.id} 
-                    className="cursor-pointer hover:bg-blue-50/40 transition-colors group border-b border-slate-50 last:border-0"
+                  <motion.div
+                    key={c.id}
                     onClick={() => setSelectedComplaintId(c.id)}
+                    className="bg-white border border-slate-200/60 p-4 rounded-2xl shadow-sm hover:shadow-md transition-all active:scale-[0.98] cursor-pointer flex flex-col gap-3 relative overflow-hidden group"
                   >
-                    <TableCell className="font-medium text-slate-900 pl-6">
-                      <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-xl bg-slate-100 flex items-center justify-center group-hover:bg-blue-100 transition-colors flex-shrink-0">
-                          <FileText className="w-4 h-4 text-slate-400 group-hover:text-blue-500 transition-colors" />
-                        </div>
-                        <span className="truncate max-w-[200px]">{c.title}</span>
+                    <div className="flex justify-between items-start gap-3">
+                      <div className="flex-1">
+                        <span className="inline-flex items-center px-2 py-0.5 rounded-md bg-slate-100 text-[10px] font-semibold text-slate-600 mb-2 uppercase tracking-wide">
+                          {c.complaint_categories?.name || 'UMUM'}
+                        </span>
+                        <h3 className="font-bold text-slate-900 text-sm line-clamp-2 leading-tight">
+                          {c.title}
+                        </h3>
                       </div>
-                    </TableCell>
-                    <TableCell>
-                      <span className="inline-flex items-center px-2.5 py-1 rounded-lg bg-slate-100 text-xs font-medium text-slate-600">
-                        {c.complaint_categories?.name || '-'}
-                      </span>
-                    </TableCell>
-                    <TableCell className="hidden md:table-cell">
-                      <div className="flex items-center gap-1.5 text-slate-500 text-sm">
-                        <MapPin className="w-3.5 h-3.5 flex-shrink-0" />
-                        <span className="truncate max-w-[160px]">{c.location}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-xs font-semibold border ${statusStyle.className}`}>
+                      <span className={`inline-flex items-center px-2.5 py-1 rounded-lg text-[10px] font-bold border shrink-0 ${statusStyle.className}`}>
                         {statusStyle.label}
                       </span>
-                    </TableCell>
-                    <TableCell className="text-right pr-6">
-                      <div className="flex items-center justify-end gap-2 text-slate-400 text-sm">
-                        <Calendar className="w-3.5 h-3.5" />
-                        <span className="tabular-nums">
-                          {new Date(c.created_at).toLocaleDateString('id-ID', {
-                            day: 'numeric',
-                            month: 'short',
-                            year: 'numeric'
-                          })}
-                        </span>
-                        <ChevronRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity text-blue-500" />
-                      </div>
-                    </TableCell>
-                  </TableRow>
-                )
-              })
-            ) : (
-              <TableRow>
-                <TableCell colSpan={5} className="text-center py-16 text-slate-400">
-                  <div className="flex flex-col items-center gap-3">
-                    <div className="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center">
-                      <ClipboardList className="w-8 h-8 text-slate-300" />
                     </div>
-                    <p className="text-sm">{searchQuery ? "Tidak ada laporan yang cocok dengan pencarian Anda." : "Belum ada laporan pengaduan yang Anda buat."}</p>
-                  </div>
-                </TableCell>
-              </TableRow>
-            )}
-          </TableBody>
-        </Table>
+
+                    <div className="flex items-center justify-between mt-1 pt-3 border-t border-slate-50">
+                       <div className="flex items-center gap-1.5 text-slate-500 text-xs font-medium">
+                          <Calendar className="w-3.5 h-3.5 text-slate-400" />
+                          <span>
+                            {new Date(c.created_at).toLocaleDateString('id-ID', {
+                              day: 'numeric', month: 'short', year: 'numeric'
+                            })}
+                          </span>
+                       </div>
+                       <ChevronRight className="w-4 h-4 text-slate-300 group-hover:text-blue-500 transition-colors" />
+                    </div>
+                  </motion.div>
+                )
+              })}
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center gap-3 py-10 text-slate-400 bg-white rounded-2xl border border-dashed border-slate-200 mt-2">
+              <ClipboardList className="w-8 h-8 text-slate-300" />
+              <p className="text-xs text-center px-4">{searchQuery ? "Pencarian tidak ditemukan." : "Belum ada pengaduan."}</p>
+            </div>
+          )}
+        </div>
+
+        {/* Pagination Controls */}
+        {totalPages > 1 && (
+          <div className="p-4 border-t border-slate-100 flex items-center justify-between bg-white md:rounded-b-2xl">
+            <span className="text-sm text-slate-500 font-medium">
+              Halaman {safePage} dari {totalPages}
+            </span>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(p => Math.max(1, p - 1))}
+                disabled={safePage === 1}
+                className="h-8 w-8 p-0 rounded-lg border-slate-200 text-slate-600 hover:bg-slate-50"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setCurrentPage(p => Math.min(totalPages, p + 1))}
+                disabled={safePage === totalPages}
+                className="h-8 w-8 p-0 rounded-lg border-slate-200 text-slate-600 hover:bg-slate-50"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </Button>
+            </div>
+          </div>
+        )}
       </motion.div>
 
+      {/* Mobile Floating CTA Button */}
+      <div className="md:hidden pt-4 pb-2">
+        <Button 
+          onClick={() => setIsDialogOpen(true)} 
+          className="w-full rounded-2xl h-14 bg-blue-600 hover:bg-blue-700 shadow-xl shadow-blue-600/20 text-base font-bold"
+        >
+          <PlusCircle className="w-5 h-5 mr-2" /> Buat Pengaduan Baru
+        </Button>
+      </div>
+
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[500px]">
+        <DialogContent className="w-[95vw] sm:max-w-[560px] max-h-[85vh] overflow-y-auto z-[9999] bg-white/95 backdrop-blur-xl border-slate-200 p-5 md:p-8 rounded-3xl">
           <DialogHeader>
-            <DialogTitle>Buat Pengaduan Baru</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-xl md:text-2xl font-bold text-slate-900">Buat Pengaduan Baru</DialogTitle>
+            <DialogDescription className="text-sm md:text-base text-slate-500">
               Isi form di bawah dengan informasi sejelas mungkin.
             </DialogDescription>
           </DialogHeader>

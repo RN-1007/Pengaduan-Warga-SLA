@@ -10,13 +10,26 @@ import { ArrowLeft } from "lucide-react"
 export default function AuthPage() {
   const [isLogin, setIsLogin] = useState(true)
   const [isMounted, setIsMounted] = useState(false)
+  const [isDesktop, setIsDesktop] = useState(true)
 
   useEffect(() => {
     setIsMounted(true)
+    
+    // Check if desktop
+    const handleResize = () => setIsDesktop(window.innerWidth >= 768)
     if (typeof window !== 'undefined') {
+      handleResize()
+      window.addEventListener('resize', handleResize)
+      
       const params = new URLSearchParams(window.location.search)
       if (params.get('tab') === 'register') {
         setIsLogin(false)
+      }
+    }
+    
+    return () => {
+      if (typeof window !== 'undefined') {
+        window.removeEventListener('resize', handleResize)
       }
     }
   }, [])
@@ -43,7 +56,7 @@ export default function AuthPage() {
         {/* Form Area (Sliding) */}
         <motion.div 
           initial={false}
-          animate={{ x: isLogin ? "0%" : "100%" }}
+          animate={{ x: isDesktop ? (isLogin ? "0%" : "100%") : "0%" }}
           transition={{ type: "spring", stiffness: 300, damping: 30 }}
           className="w-full md:absolute md:top-0 md:left-0 md:w-1/2 md:h-full px-6 pt-16 pb-8 md:p-12 lg:p-16 flex flex-col items-center justify-start md:justify-center bg-white z-10 relative overflow-y-auto scrollbar-hide"
         >

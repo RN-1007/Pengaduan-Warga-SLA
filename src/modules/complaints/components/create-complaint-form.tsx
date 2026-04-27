@@ -112,8 +112,8 @@ export function CreateComplaintForm({
     if (!file) return
 
     // Validasi ukuran (maks 5MB)
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("Ukuran foto maksimal 5MB")
+    if (file.size > 1 * 1024 * 1024) {
+      toast.error("Ukuran foto maksimal 1MB")
       return
     }
     // Validasi tipe file
@@ -153,11 +153,11 @@ export function CreateComplaintForm({
 
   return (
     <Form {...form}>
-      <motion.form 
+      <motion.form
         variants={formVariants}
         initial="hidden"
         animate="show"
-        onSubmit={form.handleSubmit((d) => mutation.mutate(d))} 
+        onSubmit={form.handleSubmit((d) => mutation.mutate(d))}
         className="space-y-4"
       >
 
@@ -259,7 +259,7 @@ export function CreateComplaintForm({
         {/* ── Upload Foto ── */}
         <motion.div variants={itemVariants} className="space-y-2">
           <label className="text-sm font-semibold text-slate-700 block">
-            Foto Bukti <span className="font-normal text-slate-400">(Opsional, maks. 5MB)</span>
+            Foto Bukti <span className="font-normal text-slate-400">(Opsional, maks. 1MB)</span>
           </label>
 
           {/* Preview jika sudah ada foto */}
@@ -296,7 +296,7 @@ export function CreateComplaintForm({
               </div>
               <div className="text-center">
                 <p className="text-sm font-semibold text-slate-600 group-hover:text-blue-600">Klik untuk upload foto pendukung</p>
-                <p className="text-xs mt-1 text-slate-400 group-hover:text-blue-400">JPG, PNG, WEBP — Maks. 5MB</p>
+                <p className="text-xs mt-1 text-slate-400 group-hover:text-blue-400">JPG, PNG, WEBP — Maks. 1MB</p>
               </div>
             </button>
           )}

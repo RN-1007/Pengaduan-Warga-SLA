@@ -364,10 +364,10 @@ export default function CitizenLaporanPage() {
 
       {/* ══════ MODAL ══════ */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="sm:max-w-[560px] max-h-[90vh] overflow-y-auto z-[9999] bg-white/95 backdrop-blur-xl border-slate-200">
+        <DialogContent className="w-[95vw] sm:max-w-[560px] max-h-[85vh] overflow-y-auto z-[9999] bg-white/95 backdrop-blur-xl border-slate-200 p-5 md:p-8 rounded-3xl">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold text-slate-900">Buat Pengaduan Baru</DialogTitle>
-            <DialogDescription className="text-slate-500">Isi form dengan informasi sejelas mungkin. Sertakan foto bukti untuk mempercepat penanganan.</DialogDescription>
+            <DialogTitle className="text-xl md:text-2xl font-bold text-slate-900">Buat Pengaduan Baru</DialogTitle>
+            <DialogDescription className="text-sm md:text-base text-slate-500">Isi form dengan informasi sejelas mungkin. Sertakan foto bukti untuk mempercepat penanganan.</DialogDescription>
           </DialogHeader>
           <div className="mt-4">
             {user && <CreateComplaintForm citizenId={user.id} onSuccess={() => setIsDialogOpen(false)} />}

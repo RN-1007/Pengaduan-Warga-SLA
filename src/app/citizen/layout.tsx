@@ -13,12 +13,12 @@ export default function CitizenLayout({ children }: { children: React.ReactNode 
       <CitizenNavbar />
 
       {/* Main Content Area */}
-      <main className="relative z-10 w-full min-h-screen">
+      <main className="relative z-10 w-full min-h-screen pb-20 md:pb-0">
         {children}
       </main>
       
       {/* Subtle Footer inside Dashboard */}
-      <footer className="py-6 mt-auto text-center border-t border-slate-100 bg-white/50 backdrop-blur-sm">
+      <footer className="py-6 mt-auto text-center border-t border-slate-100 bg-white/50 backdrop-blur-sm pb-24 md:pb-6">
         <p className="text-xs font-semibold text-slate-400">
           &copy; {new Date().getFullYear()} LaporSLA. Hak Cipta Dilindungi.
         </p>

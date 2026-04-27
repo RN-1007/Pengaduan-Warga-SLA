@@ -82,10 +82,10 @@ export function BlobCursor({
   return (
     <div
       ref={containerRef}
-      className="fixed inset-0 pointer-events-none overflow-hidden"
+      className="hidden md:block fixed inset-0 pointer-events-none overflow-hidden"
       style={{ zIndex }}
     >
-      <style dangerouslySetInnerHTML={{ __html: `* { cursor: none !important; }` }} />
+      <style dangerouslySetInnerHTML={{ __html: `@media (min-width: 768px) { * { cursor: none !important; } }` }} />
       {useFilter && (
         <svg className="absolute w-0 h-0">
           <filter id={filterId}>

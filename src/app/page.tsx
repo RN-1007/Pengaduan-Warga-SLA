@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { motion, Variants } from "framer-motion";
 import { ArrowRight, ShieldCheck, Clock, Activity, Users, SendToBack, MapPin } from "lucide-react";
 import { BlobCursor } from "@/components/ui/blob-cursor";
+import RotatingText from "@/components/ui/rotating-text";
 
 export default function LandingPage() {
   const containerVariants: Variants = {
@@ -97,12 +98,26 @@ export default function LandingPage() {
           
           <motion.h1 
             variants={itemVariants} 
-            className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 mb-8 leading-[1.1]"
+            className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 mb-8 leading-[1.1] flex flex-col items-center justify-center text-center px-2"
           >
-            Suara Anda didengar,<br className="hidden md:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
-              masalah diselesaikan.
-            </span>
+            <span>Suara Anda didengar,</span>
+            <div className="flex justify-center mt-3 overflow-hidden h-[90px] sm:h-[100px] md:h-[110px] w-full">
+              <RotatingText
+                texts={['Kota Membaik.', 'Solusi Dikejar.', 'Laporan Lancar.', 'Langsung Kelar.']}
+                mainClassName="text-blue-600 overflow-hidden py-1 md:py-2 justify-center text-center"
+                staggerFrom="last"
+                initial={{ y: "100%" }}
+                animate={{ y: 0 }}
+                exit={{ y: "-120%" }}
+                staggerDuration={0.025}
+                splitLevelClassName="overflow-hidden pb-1"
+                transition={{ type: "spring", damping: 30, stiffness: 400 }}
+                rotationInterval={3000}
+                splitBy="characters"
+                auto
+                loop
+              />
+            </div>
           </motion.h1>
           
           <motion.p variants={itemVariants} className="text-lg md:text-xl text-slate-500 max-w-2xl mx-auto mb-10 leading-relaxed">

@@ -71,13 +71,13 @@ export default function CitizenLandingPage() {
 
           <motion.h1
             variants={itemVariants}
-            className="text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 mb-8 leading-[1.1] flex flex-col items-center justify-center"
+            className="text-4xl sm:text-5xl md:text-7xl font-extrabold tracking-tight text-slate-900 mb-8 leading-[1.1] flex flex-col items-center justify-center text-center px-2"
           >
             <span>Suara Anda didengar,</span>
-            <div className="text-blue-600 flex justify-center mt-2 overflow-hidden h-[60px] md:h-[90px] w-full">
+            <div className="flex justify-center mt-3 overflow-hidden h-[90px] sm:h-[100px] md:h-[110px] w-full">
               <RotatingText
-                texts={['masalah diselesaikan.', 'SLA tercapai.', 'lingkungan membaik.', 'warga sejahtera.']}
-                mainClassName="overflow-hidden justify-center text-center pb-2"
+                texts={['Kota Membaik.', 'Solusi Dikejar.', 'Laporan Lancar.', 'Langsung Kelar.']}
+                mainClassName="text-blue-600 overflow-hidden py-1 md:py-2 justify-center text-center"
                 staggerFrom="last"
                 initial={{ y: "100%" }}
                 animate={{ y: 0 }}
@@ -247,7 +247,10 @@ export default function CitizenLandingPage() {
         <div className="max-w-7xl mx-auto px-6 text-center">
           <h2 className="text-3xl font-bold tracking-tight text-slate-900 mb-16">Alur Pengaduan</h2>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8 relative">
+            {/* Desktop Horizontal Line */}
             <div className="hidden md:block absolute top-8 left-[12.5%] w-[75%] h-0.5 bg-slate-200 z-0" />
+            {/* Mobile Vertical Line */}
+            <div className="md:hidden absolute top-[2rem] bottom-[4rem] left-1/2 -translate-x-1/2 w-0.5 bg-slate-200 z-0" />
 
             {[
               { title: "Tulis Laporan", icon: MapPin, desc: "Sertakan foto, lokasi, dan detail masalah secara lengkap." },
@@ -276,8 +279,10 @@ export default function CitizenLandingPage() {
                     <step.icon className="w-6 h-6" />
                   )}
                 </div>
-                <h4 className="text-lg font-semibold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">{step.title}</h4>
-                <p className="text-sm text-slate-500 px-4 group-hover:text-slate-700 transition-colors">{step.desc}</p>
+                <div className="relative z-10 bg-slate-50 py-1 flex flex-col items-center">
+                  <h4 className="text-lg font-semibold text-slate-900 mb-2 group-hover:text-blue-600 transition-colors">{step.title}</h4>
+                  <p className="text-sm text-slate-500 px-4 group-hover:text-slate-700 transition-colors">{step.desc}</p>
+                </div>
               </motion.div>
             ))}
           </div>
