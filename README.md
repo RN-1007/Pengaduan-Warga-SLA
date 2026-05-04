@@ -1,6 +1,6 @@
 # Pengaduan Warga SLA 🚀
 
-Sistem manajemen pengaduan warga modern yang dibangun dengan **Next.js**, **Supabase**, dan **shadcn/ui**. Proyek ini dirancang untuk menangani laporan warga dengan sistem Service Level Agreement (SLA) yang dinamis.
+Sistem manajemen pengaduan warga modern yang dibangun dengan **Next.js**, **Supabase**, dan **shadcn/ui**. Proyek ini dirancang untuk menangani laporan warga dengan sistem Service Level Agreement (SLA) yang dinamis..
 
 ## 🛠️ Stack Teknologi
 
