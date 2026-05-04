@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { motion, Variants } from "framer-motion";
 import { ArrowRight, ShieldCheck, Clock, Activity, Users, SendToBack, MapPin } from "lucide-react";
+import RippleCursor from "@/components/ui/ripple-cursor";
 import RotatingText from "@/components/ui/rotating-text";
 
 export default function CitizenLandingPage() {
@@ -22,7 +23,8 @@ export default function CitizenLandingPage() {
   };
 
   return (
-    <div className="w-full">
+    <div className="relative bg-white text-slate-900 selection:bg-blue-100 selection:text-blue-900 overflow-x-hidden font-sans w-full">
+      {/* Background Decor */}
       {/* Hero Section */}
       <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 px-6 min-h-[80vh] flex items-center justify-center">
 

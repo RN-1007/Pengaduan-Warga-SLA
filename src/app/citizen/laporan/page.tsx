@@ -15,7 +15,7 @@ import { CreateComplaintForm } from '@/modules/complaints/components/create-comp
 import { SLA_RESOLUTION_HOURS } from '@/types/database.types'
 import { SpotlightCard } from '@/components/ui/spotlight-card'
 import { ShinyText } from '@/components/ui/shiny-text'
-import { BlobCursor } from '@/components/ui/blob-cursor'
+
 
 export default function CitizenLaporanPage() {
   const [isDialogOpen, setIsDialogOpen] = useState(false)
@@ -61,7 +61,7 @@ export default function CitizenLaporanPage() {
 
   return (
     <div className="w-full">
-      <BlobCursor blobType="circle" fillColor="rgba(59, 130, 246, 0.4)" zIndex={0} />
+
 
       {/* ══════ NEW SPLIT HERO ══════ */}
       <section className="relative pt-20 pb-16 lg:pt-24 lg:pb-20 px-6 min-h-[80vh] flex items-center overflow-hidden bg-slate-50/30">
@@ -73,9 +73,9 @@ export default function CitizenLaporanPage() {
 
         <div className="max-w-7xl mx-auto w-full relative z-10">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-            
+
             {/* Left Content: Text & CTA */}
-            <motion.div 
+            <motion.div
               initial="hidden"
               animate="visible"
               variants={containerV}
@@ -114,17 +114,17 @@ export default function CitizenLaporanPage() {
             </motion.div>
 
             {/* Right Content: Floating Visuals */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: 50 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.8, delay: 0.2 }}
               className="relative hidden lg:flex items-center justify-center h-[550px]"
             >
               <div className="relative w-full max-w-md">
-                
+
                 {/* Floating Card 1: Status */}
-                <motion.div 
-                  animate={{ y: [-12, 12, -12], rotate: [0, 2, -2, 0] }} 
+                <motion.div
+                  animate={{ y: [-12, 12, -12], rotate: [0, 2, -2, 0] }}
                   transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
                   className="absolute z-30 top-12 -right-8 p-5 bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/60 w-64"
                 >
@@ -138,16 +138,16 @@ export default function CitizenLaporanPage() {
                     </div>
                   </div>
                   <div className="w-full bg-slate-100 rounded-full h-2 overflow-hidden">
-                    <motion.div 
+                    <motion.div
                       initial={{ width: 0 }} animate={{ width: "66%" }} transition={{ duration: 1.5, delay: 1 }}
-                      className="bg-gradient-to-r from-emerald-400 to-emerald-500 h-full rounded-full" 
+                      className="bg-gradient-to-r from-emerald-400 to-emerald-500 h-full rounded-full"
                     />
                   </div>
                 </motion.div>
 
                 {/* Floating Card 2: SLA Guarantee */}
-                <motion.div 
-                  animate={{ y: [15, -15, 15], rotate: [0, -3, 3, 0] }} 
+                <motion.div
+                  animate={{ y: [15, -15, 15], rotate: [0, -3, 3, 0] }}
                   transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
                   className="absolute z-20 bottom-16 -left-12 p-5 bg-white/90 backdrop-blur-xl rounded-2xl shadow-2xl border border-white/60 w-72"
                 >
@@ -163,8 +163,8 @@ export default function CitizenLaporanPage() {
                 </motion.div>
 
                 {/* Main Center UI Mockup */}
-                <motion.div 
-                  animate={{ y: [-5, 5, -5] }} 
+                <motion.div
+                  animate={{ y: [-5, 5, -5] }}
                   transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
                   className="relative z-10 w-[340px] mx-auto bg-white rounded-[2rem] shadow-2xl shadow-blue-900/10 border border-slate-200 overflow-hidden"
                 >
@@ -175,9 +175,9 @@ export default function CitizenLaporanPage() {
                   </div>
                   <div className="p-6">
                     <div className="w-full h-36 bg-slate-100 rounded-xl mb-6 relative overflow-hidden">
-                       <div className="absolute inset-0 flex items-center justify-center">
-                         <Camera className="w-8 h-8 text-slate-300" />
-                       </div>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <Camera className="w-8 h-8 text-slate-300" />
+                      </div>
                     </div>
                     <div className="space-y-4">
                       <div>
@@ -189,17 +189,17 @@ export default function CitizenLaporanPage() {
                         <div className="w-full h-20 bg-slate-50 rounded-lg border border-slate-100" />
                       </div>
                       <div className="w-full h-10 bg-blue-600 rounded-lg mt-2 flex items-center justify-center">
-                         <div className="w-24 h-3 bg-white/50 rounded-full" />
+                        <div className="w-24 h-3 bg-white/50 rounded-full" />
                       </div>
                     </div>
                   </div>
                   {/* Subtle fade at the bottom */}
                   <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-white to-transparent pointer-events-none" />
                 </motion.div>
-                
+
               </div>
             </motion.div>
-            
+
           </div>
         </div>
       </section>
@@ -367,7 +367,7 @@ export default function CitizenLaporanPage() {
         <DialogContent className="w-[95vw] sm:max-w-[560px] max-h-[85vh] overflow-y-auto z-[9999] bg-white/95 backdrop-blur-xl border-slate-200 p-5 md:p-8 rounded-3xl">
           <DialogHeader>
             <DialogTitle className="text-xl md:text-2xl font-bold text-slate-900">Buat Pengaduan Baru</DialogTitle>
-            <DialogDescription className="text-sm md:text-base text-slate-500">Isi form dengan informasi sejelas mungkin. Sertakan foto bukti untuk mempercepat penanganan.</DialogDescription>
+            <DialogDescription className="text-sm md:text-base text-slate-500 px-5 pl-1">Isi form dengan informasi sejelas mungkin. Sertakan foto bukti untuk mempercepat penanganan.</DialogDescription>
           </DialogHeader>
           <div className="mt-4">
             {user && <CreateComplaintForm citizenId={user.id} onSuccess={() => setIsDialogOpen(false)} />}

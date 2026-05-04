@@ -2,6 +2,7 @@
 
 import { createClient } from '@supabase/supabase-js';
 import { CreateComplaintFormData, UpdateComplaintStatusFormData } from '../domain/schemas';
+import { escalationRepository } from '../repositories/escalation.repository';
 
 const getAdminSupabase = () => {
   return createClient(
@@ -48,6 +49,9 @@ export async function createComplaintAction(data: CreateComplaintFormData, citiz
 }
 
 export async function getComplaintsByCitizenAction(citizenId: string) {
+  // Pseudo-cron for local testing: update SLAs before fetching
+  await escalationRepository.processSlaEscalation().catch(console.error);
+
   const supabase = getAdminSupabase();
   const { data, error } = await supabase
     .from('complaints')
@@ -66,6 +70,9 @@ export async function getComplaintsByCitizenAction(citizenId: string) {
 }
 
 export async function getAssignedComplaintsAction() {
+  // Pseudo-cron for local testing: update SLAs before fetching
+  await escalationRepository.processSlaEscalation().catch(console.error);
+
   const supabase = getAdminSupabase();
   const { data, error } = await supabase
     .from('complaints')
@@ -168,6 +175,9 @@ export async function deleteComplaintAction(id: string) {
 }
 
 export async function getAllComplaintsAction() {
+  // Pseudo-cron for local testing: update SLAs before fetching
+  await escalationRepository.processSlaEscalation().catch(console.error);
+
   const supabase = getAdminSupabase();
   const { data, error } = await supabase
     .from('complaints')
