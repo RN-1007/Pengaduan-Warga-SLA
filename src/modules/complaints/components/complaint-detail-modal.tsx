@@ -19,6 +19,7 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
+  DialogTrigger,
 } from "@/components/ui/dialog"
 import { MapPin, Calendar, AlertTriangle, User, Edit, Trash2, Image as ImageIcon, Clock } from 'lucide-react'
 import { useQueryClient } from "@tanstack/react-query"
@@ -146,14 +147,28 @@ export function ComplaintDetailModal({
                     <ImageIcon className="w-3.5 h-3.5" /> Foto Bukti
                   </h4>
                   {complaint.photo_url ? (
-                    <img
-                      src={complaint.photo_url}
-                      alt="Bukti"
-                      className="w-full max-h-48 object-cover rounded-xl border border-slate-200 shadow-sm"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).src = 'https://placehold.co/800x400/e2e8f0/64748b?text=Image+Not+Found';
-                      }}
-                    />
+                    <Dialog>
+                      <DialogTrigger asChild>
+                        <img
+                          src={complaint.photo_url}
+                          alt="Bukti"
+                          className="w-full max-h-48 object-cover rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:opacity-90 transition-opacity"
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = 'https://placehold.co/800x400/e2e8f0/64748b?text=Image+Not+Found';
+                          }}
+                        />
+                      </DialogTrigger>
+                      <DialogContent className="max-w-4xl p-0 overflow-hidden bg-transparent border-none shadow-none">
+                        <img 
+                          src={complaint.photo_url} 
+                          alt="Bukti Detail" 
+                          className="w-full h-auto max-h-[90vh] object-contain rounded-xl" 
+                          onError={(e) => {
+                            (e.target as HTMLImageElement).src = 'https://placehold.co/800x400/e2e8f0/64748b?text=Image+Not+Found';
+                          }}
+                        />
+                      </DialogContent>
+                    </Dialog>
                   ) : (
                     <div className="h-28 w-full bg-slate-100 border-2 border-dashed border-slate-200 rounded-xl flex items-center justify-center text-slate-400">
                       <span className="text-sm">Tidak ada foto dilampirkan</span>
