@@ -209,14 +209,15 @@ export async function submitRatingAndCloseAction(payload: {
       complaint_id: payload.complaintId,
       citizen_id: payload.citizenId,
       score: payload.score,
+      feedback_comment: payload.feedback,
     });
 
   if (ratingError) throw new Error(ratingError.message);
 
-  // 2. Update complaint status to RESOLVED
+  // 2. Update complaint status to CLOSED
   const { error: updateError } = await supabase
     .from('complaints')
-    .update({ status: 'RESOLVED', updated_at: new Date().toISOString() })
+    .update({ status: 'CLOSED', updated_at: new Date().toISOString() })
     .eq('id', payload.complaintId);
 
   if (updateError) throw new Error(updateError.message);

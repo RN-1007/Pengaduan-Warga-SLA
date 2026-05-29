@@ -317,17 +317,24 @@ export default function VerificationPage() {
                                                                 </p>
                                                             </div>
 
-                                                            <div>
-                                                                <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-                                                                    <ImageIcon className="w-3.5 h-3.5" /> Foto Bukti
-                                                                </h4>
-                                                                {complaint.photo_url ? (
-                                                                    <img
-                                                                        src={complaint.photo_url}
-                                                                        alt="Bukti"
-                                                                        className="w-full max-h-44 object-cover rounded-xl border border-slate-200 shadow-sm"
-                                                                    />
-                                                                ) : (
+                                                                <div>
+                                                                    <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
+                                                                        <ImageIcon className="w-3.5 h-3.5" /> Foto Bukti
+                                                                    </h4>
+                                                                    {complaint.photo_url ? (
+                                                                        <Dialog>
+                                                                            <DialogTrigger asChild>
+                                                                                <img
+                                                                                    src={complaint.photo_url}
+                                                                                    alt="Bukti"
+                                                                                    className="w-full max-h-44 object-cover rounded-xl border border-slate-200 shadow-sm cursor-pointer hover:opacity-90 transition-opacity"
+                                                                                />
+                                                                            </DialogTrigger>
+                                                                            <DialogContent className="max-w-4xl p-0 overflow-hidden bg-transparent border-none shadow-none">
+                                                                                <img src={complaint.photo_url} alt="Bukti Detail" className="w-full h-auto max-h-[90vh] object-contain rounded-xl" />
+                                                                            </DialogContent>
+                                                                        </Dialog>
+                                                                    ) : (
                                                                     <div className="h-28 w-full bg-slate-100 border-2 border-dashed border-slate-200 rounded-xl flex items-center justify-center text-slate-400">
                                                                         <span className="text-sm">Tidak ada foto dilampirkan</span>
                                                                     </div>
@@ -423,8 +430,8 @@ export default function VerificationPage() {
 
                                                             <div className="space-y-2 flex-1">
                                                                 <Label className="text-slate-700 font-semibold text-sm">
-                                                                    Catatan Internal{" "}
-                                                                    <span className="font-normal text-slate-400">(Opsional)</span>
+                                                                    Catatan Internal / Alasan Tolak{" "}
+                                                                    <span className="font-normal text-slate-400">(Wajib jika menolak)</span>
                                                                 </Label>
                                                                 <Textarea
                                                                     placeholder="Tambahkan instruksi khusus untuk petugas lapangan..."
@@ -445,13 +452,18 @@ export default function VerificationPage() {
                                                                     variant="outline"
                                                                     className="w-full sm:flex-1 text-red-600 hover:text-red-700 hover:bg-red-50 border-red-200 rounded-xl h-10"
                                                                     disabled={rejectMutate.isPending}
-                                                                    onClick={() =>
+                                                                    onClick={() => {
+                                                                        const reason = activeNotes[complaint.id];
+                                                                        if (!reason || reason.trim() === "") {
+                                                                            toast.error("Alasan penolakan wajib diisi di kolom catatan");
+                                                                            return;
+                                                                        }
                                                                         rejectMutate.mutate({
                                                                             complaintId: complaint.id,
                                                                             adminId: user?.id || "",
-                                                                            reason: "Ditolak oleh Admin",
-                                                                        })
-                                                                    }
+                                                                            reason: reason,
+                                                                        });
+                                                                    }}
                                                                 >
                                                                     {rejectMutate.isPending ? (
                                                                         <Loader2 className="w-4 h-4 mr-1.5 animate-spin" />
